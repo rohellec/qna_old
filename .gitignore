@@ -1,0 +1,32 @@
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore Byebug command history file.
+.byebug_history
+
+# Ignore special dotenv files
+.env*
+
+# Ignore configuration files
+config/private_pub.yml
+
+# Ignore uploaded files
+/public/system
+/public/tmp
+/public/uploads
+/public/spec
+
+# Ignore database configuration
+/config/database.yml
+
+# Ignore other unnecessary files
+*~
+
+# Ignore Spring files
+/spring/*.pid
