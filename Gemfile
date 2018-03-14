@@ -32,7 +32,7 @@ gem 'jbuilder', '~> 2.7'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.7.2'
-  gem 'factory_girl_rails', '~> 4.9.0'
+  gem 'factory_bot_rails', '~> 4.8.2'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 10.0'
   gem 'dotenv-rails', '~> 2.2.1'
