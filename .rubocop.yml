@@ -1,3 +1,5 @@
+require: rubocop-rspec
+
 AllCops:
   Include:
     - 'app/**/*.rb'
@@ -21,6 +23,12 @@ Metrics/ClassLength:
 
 Metrics/LineLength:
   Max: 100
+  IgnoredPatterns: ['\A\s*#']
+
+Naming/FileName:
+  Exclude:
+    - 'Rakefile'
+    - 'Gemfile'
 
 Rails:
   Enabled: true
