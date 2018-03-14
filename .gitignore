@@ -16,6 +16,9 @@
 # Ignore configuration files
 config/private_pub.yml
 
+# Ignore pre-commit hooks
+rubocop_pre_commit_hook.rb
+
 # Ignore uploaded files
 /public/system
 /public/tmp
