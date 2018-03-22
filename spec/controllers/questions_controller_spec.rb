@@ -17,11 +17,16 @@ describe QuestionsController do
 
   describe "GET #show" do
     let(:question) { FactoryBot.create(:question) }
+    let(:answers)  { FactoryBot.create_pair(:answer, question: question) }
 
     before { get :show, params: { id: question } }
 
-    it "set requested question" do
+    it "sets requested question" do
       expect(assigns(:question)).to eq(question)
+    end
+
+    it "populates an array of answers for current question" do
+      expect(assigns(:answers)).to eq(answers)
     end
 
     it "renders 'show' view" do
@@ -32,7 +37,7 @@ describe QuestionsController do
   describe "GET #new" do
     before { get :new }
 
-    it "set requested question" do
+    it "builds new question" do
       expect(assigns(:question)).to be_a_new(Question)
     end
 
@@ -60,7 +65,7 @@ describe QuestionsController do
     context "with invalid attributes" do
       let(:invalid_attributes) { FactoryBot.attributes_for(:invalid_question) }
 
-      it "doesn't saves the new question to db" do
+      it "doesn't save the new question to db" do
         expect do
           post :create, params: { question: invalid_attributes }
         end.not_to change(Question, :count)
