@@ -26,6 +26,7 @@ module Qna
     # -- all .rb files in that directory are automatically loaded.
 
     config.generators do |g|
+      g.template_engine :slim
       g.test_framework :rspec,
                        fixtures: true,
                        controller_specs: true,
