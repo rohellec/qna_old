@@ -1,0 +1,14 @@
+h1 New Question
+
+= form_for @question do |form|
+  div.field
+    = form.label :title
+    = form.text_field :title
+  div.field
+    = form.label :body
+    = form.text_area :body
+  div.actions
+    = form.submit
+
+div
+  = link_to "Back", questions_path

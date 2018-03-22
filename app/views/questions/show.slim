@@ -1,0 +1,16 @@
+h1 = @question.title
+
+div
+  p = @question.body
+
+div
+  - if @answers.any?
+    ul == render partial: "answer", collection: @answers
+  - else
+    p
+      i Nobody has given any answer yet!
+
+div
+  => link_to "New answer", new_question_answer_path(@question)
+  span |
+  =< link_to "Back", questions_path
