@@ -28,7 +28,14 @@ describe AnswersController do
         .to change(Answer, :count).by(1)
       end
 
-      it "redirects to 'index' view" do
+      it "creates new question for answer" do
+        expect do
+          post :create, params: { question_id: question, answer: valid_attributes }
+        end
+        .to change(question.answers, :count).by(1)
+      end
+
+      it "redirects to question 'show' view" do
         post :create, params: { question_id: question, answer: valid_attributes }
         expect(response).to redirect_to question
       end
