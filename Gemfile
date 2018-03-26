@@ -16,6 +16,8 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '~> 4.1.6'
 
+# Use Slim as template engine
+gem 'slim-rails', '~> 3.1.3'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -32,7 +34,7 @@ gem 'jbuilder', '~> 2.7'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.7.2'
-  gem 'factory_girl_rails', '~> 4.9.0'
+  gem 'factory_bot_rails', '~> 4.8.2'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 10.0'
   gem 'dotenv-rails', '~> 2.2.1'
@@ -40,6 +42,7 @@ end
 
 group :test do
   gem 'shoulda-matchers', '~> 3.1.2'
+  gem 'rails-controller-testing', '~> 1.0.2'
 end
 
 group :development do

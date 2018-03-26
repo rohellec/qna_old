@@ -1,0 +1,11 @@
+h1 Questions
+
+div
+  - if @questions.any?
+    ul == render @questions
+  - else
+    p
+      i Nobody has asked anything yet!
+
+div
+  = link_to "New question", new_question_path
