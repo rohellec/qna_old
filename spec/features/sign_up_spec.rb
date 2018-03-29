@@ -1,10 +1,10 @@
 require "rails_helper"
 
-feature "Signing up", %q{
+feature "Signing up", %(
   In order to be able to sign in
   As a user
   I want to be able to sign up
-} do
+) do
 
   given(:user) { create(:user) }
 
