@@ -6,23 +6,44 @@ feature "Signing in", %(
   I want to be able to sign in
 ) do
 
-  give(:user) { create(:user) }
+  context "Non-activated user" do
+    given(:user) { create(:user) }
 
-  scenario "Activated user is signing in" do
-    visit sign_in_path
-    fill_in :email,    with: user.email
-    fill_in :password, with: user.password
-    click_on "Sign in"
+    background { log_in user }
 
-    expect(page).to have_content("Signed in succesfully")
+    scenario "is not able sign in" do
+      expect(page).to have_content "You have to confirm your email"
+    end
+
+    context "after activation" do
+      background do
+        user.confirm
+        log_in user
+      end
+
+      scenario "is able to sign in" do
+        expect(page).to have_content "Signed in successfully"
+      end
+
+      context "after signing in" do
+        background { click_on "Sign out" }
+
+        scenario "is able to sign out" do
+          expect(page).to have_content "Signed out successfully"
+          expect(page).to have_link    "Sign in"
+          expect(page).to have_no_link "Sign out"
+        end
+      end
+    end
   end
 
-  scenario "Non-existing user is trying to sign in" do
-    visit sign_in_path
-    fill_in :email,    with: invalid_user.email
-    fill_in :password, with: invalid_user.password
-    click_on "Sign in"
+  context "Non-signed up user" do
+    given(:user) { build(:user) }
 
-    expect(page).to have_content("Invalid email or password")
+    background { log_in user }
+
+    scenario "is not signed in" do
+      expect(page).to have_content "Invalid Email or password"
+    end
   end
 end

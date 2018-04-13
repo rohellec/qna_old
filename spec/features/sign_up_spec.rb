@@ -6,53 +6,47 @@ feature "Signing up", %(
   I want to be able to sign up
 ) do
 
-  given(:user) { create(:user) }
+  given(:user) { build(:user) }
+  given(:last_email) { ActionMailer::Base.deliveries.last }
 
-  scenario "Non-registered user is signing up" do
-    visit sign_up_path
-    fill_in :email
-    fill_in :password
-    fill_in :password_confirmation
-    click_on "Sign up"
-
-    expect(page).to have_content("Email was sent")
-    expect(last_email.to).to include(user.email)
-  end
-
-  feature "After confirmation email was sent" do
-    scenario "Clicking activation link inside email body" do
-      token = last_email.body.match(/confirmation_token=[^"]+/)
-      url = "/users/confirmation?#{token}"
-      visit url
-
-      expect(page).to have_content("Your account was succesfully confirmed")
+  context "For non-signed up user" do
+    background do
+      visit new_user_registration_path
+      fill_in :user_email,    with: user.email
+      fill_in :user_password, with: user.password
+      fill_in :user_password_confirmation, with: user.password
+      within(".actions") { click_on "Sign up" }
     end
 
-    feature "After profile is confirmed" do
-      scenario "User is signing in" do
-        visit sign_in_path
-        fill_in :email
-        fill_in :password
-        click_on "Sign in"
+    scenario "confirmation email is sent" do
+      expect(page).to have_content "message with a confirmation link has been sent"
+      expect(last_email.to).to include user.email
+    end
 
-        expect(page).to have_content("Signed in succesfully")
+    context "after following confirmation link" do
+      background do
+        token = last_email.body.match(/confirmation_token=[^"]+/)
+        url = "/users/confirmation?#{token}"
+        visit url
       end
 
-      feature "After successfull signing in" do
-        scenario "User is redirected when trying to access sign up page" do
-          visit sign_up_path
-          expect(page).to have_path(questions_path)
+      scenario "account is confirmed" do
+        expect(page).to have_content "Your email address has been successfully confirmed"
+      end
+
+      context "after account confirmation" do
+        background { log_in user }
+
+        scenario "user is able to sign in" do
+          expect(page).to have_content "Signed in successfully"
         end
-      end
 
-      scenario "Signed up user is trying to sign up twice" do
-        visit sign_up_path
-        fill_in :email
-        fill_in :password
-        fill_in :password_confirmation
-        click_on "Sign up"
-
-        expect(page).to have_content("This email is already taken")
+        context "trying to sign up when already signid in " do
+          scenario "user is redirected" do
+            visit new_user_registration_path
+            expect(page).to have_current_path root_path
+          end
+        end
       end
     end
   end
