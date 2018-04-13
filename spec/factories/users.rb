@@ -7,7 +7,7 @@ FactoryBot.define do
     password_confirmation "12345678"
 
     factory :confirmed_user do
-      confirmed_at Time.now
+      confirmed_at { Time.current }
     end
   end
 end
