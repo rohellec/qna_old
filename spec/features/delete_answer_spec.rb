@@ -15,18 +15,18 @@ feature "Deleting answer", %(
     background { sign_in user }
 
     context "from question's page" do
-      background { visit question_path(question) }
+      background do
+        visit question_path(question)
+        within("table") { click_on "Delete" }
+      end
 
       scenario "user's answer is removed" do
-        find(:xpath, "//a[@href='#{answer_path(user_answer)}']", text: "Delete").click
-
         expect(page).to have_no_content user_answer.body
         expect(page).to have_content "Answer has been successfully deleted"
       end
 
       scenario "'Delete' link is not visible for other user's answer" do
-        expect(page).to have_no_xpath "//a[@href='#{answer_path(other_answer)}']",
-                                      text: "Delete"
+        expect(page).to have_no_selector "td", text: "Delete"
       end
     end
   end
@@ -36,7 +36,7 @@ feature "Deleting answer", %(
       background { visit question_path(question) }
 
       scenario "'Delete' link is not visible" do
-        expect(page).to have_no_content "Delete"
+        expect(page).to have_no_link "Delete"
       end
     end
   end

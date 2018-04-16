@@ -17,18 +17,18 @@ feature "Deleting question", %(
     end
 
     context "from questions index page" do
-      background { visit questions_path }
+      background do
+        visit questions_path
+        within("table") { click_on "Delete" }
+      end
 
       scenario "user's question is removed" do
-        find(:xpath, "//a[@href='#{question_path(user_question)}']", text: "Delete").click
-
         expect(page).to have_no_content user_question.title
         expect(page).to have_content "Question has been successfully deleted"
       end
 
       scenario "'Delete' link is not visible for other user's question" do
-        expect(page).to have_no_xpath "//a[@href='#{question_path(other_question)}']",
-                                      text: "Delete"
+        expect(page).to have_no_link "Delete"
       end
     end
 
@@ -51,7 +51,7 @@ feature "Deleting question", %(
       background { visit question_path(other_question) }
 
       scenario "'Delete' link is not visible" do
-        expect(page).to have_no_content "Delete"
+        expect(page).to have_no_link "Delete"
       end
     end
   end
@@ -61,7 +61,7 @@ feature "Deleting question", %(
       background { visit questions_path }
 
       scenario "'Delete' link is not visible" do
-        expect(page).to have_no_content "Delete"
+        expect(page).to have_no_link "Delete"
       end
     end
 
@@ -69,7 +69,7 @@ feature "Deleting question", %(
       background { visit question_path(user_question) }
 
       scenario "'Delete' link is not visible" do
-        expect(page).to have_no_content "Delete"
+        expect(page).to have_no_link "Delete"
       end
     end
   end
