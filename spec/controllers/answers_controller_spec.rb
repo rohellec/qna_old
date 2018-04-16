@@ -101,7 +101,13 @@ describe AnswersController do
     end
 
     context "as non-authenticated user" do
-      let(:answer) { create(:answer) }
+      let!(:answer) { create(:answer) }
+
+      it "doesn't delete answer from db" do
+        expect do
+          delete :destroy, params: { id: answer }
+        end.not_to change(Answer, :count)
+      end
 
       it "redirects to sign in path" do
         delete :destroy, params: { id: answer }

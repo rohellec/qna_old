@@ -2,7 +2,6 @@ require 'rails_helper'
 
 describe QuestionsController do
   let(:user)     { create(:confirmed_user) }
-  let(:question) { create(:question) }
 
   before { request.env['devise.mapping'] = Devise.mappings[:user] }
 
@@ -21,6 +20,7 @@ describe QuestionsController do
   end
 
   describe "GET #show" do
+    let(:question) { create(:question) }
     let(:answers)  { create_pair(:answer, question: question) }
 
     before { get :show, params: { id: question } }
@@ -114,9 +114,9 @@ describe QuestionsController do
   end
 
   describe "DELETE #destroy" do
-    context "as authenticated user" do
-      let!(:user_question) { create(:question, user: user) }
+    let!(:user_question) { create(:question, user: user) }
 
+    context "as authenticated user" do
       before { sign_in user }
 
       context "as a question's author" do
@@ -149,8 +149,14 @@ describe QuestionsController do
     end
 
     context "as non-authenticated user" do
+      it "doesn't delete question from db" do
+        expect do
+          delete :destroy, params: { id: user_question }
+        end.not_to change(Question, :count)
+      end
+
       it "redirects to sign in path" do
-        delete :destroy, params: { id: question }
+        delete :destroy, params: { id: user_question }
         expect(response).to redirect_to new_user_session_path
       end
     end
