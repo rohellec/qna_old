@@ -1,7 +1,6 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: [:show, :index]
   before_action :set_question,  only: [:show, :destroy]
-  before_action :build_answer,  only: :show
   before_action :correct_user?, only: :destroy
 
   def index
@@ -10,6 +9,7 @@ class QuestionsController < ApplicationController
 
   def show
     @answers = @question.answers
+    @answer  = Answer.new
   end
 
   def new
@@ -27,18 +27,12 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    @question.delete
+    @question.destroy
     flash[:success] = "Question has been successfully deleted"
     redirect_to questions_path
   end
 
   private
-
-  def build_answer
-    return if params[:new_answer] != "true"
-    authenticate_user!
-    @answer = @question.answers.build
-  end
 
   def correct_user?
     redirect_to root_path unless current_user.author_of?(@question)

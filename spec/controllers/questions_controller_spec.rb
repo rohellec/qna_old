@@ -33,33 +33,12 @@ describe QuestionsController do
       expect(assigns(:answers)).to match_array(answers)
     end
 
-    it "renders 'show' view" do
-      expect(response).to render_template :show
+    it "builds new answer" do
+      expect(assigns(:answer)).to be_a_new Answer
     end
 
-    context "with new_answer param" do
-      context "as authenticated user" do
-        before do
-          sign_in user
-          get :show, params: { id: question, new_answer: true }
-        end
-
-        it "builds new answer" do
-          expect(assigns(:answer)).to be_a_new Answer
-        end
-
-        it "renders 'show' form" do
-          expect(response).to render_template :show
-        end
-      end
-
-      context "as non-authenticated user" do
-        before { get :show, params: { id: question, new_answer: true } }
-
-        it "redirects to sign in path" do
-          expect(response).to redirect_to new_user_session_path
-        end
-      end
+    it "renders 'show' view" do
+      expect(response).to render_template :show
     end
   end
 

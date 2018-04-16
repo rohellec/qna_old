@@ -12,9 +12,7 @@ div
       i Nobody has given any answer yet!
 
 div
-  - if user_signed_in? && @answer.nil?
-    => link_to "New Answer", question_path(@question, new_answer: true)
-    | |
+  = link_to "Back", questions_path
 
   - if current_user&.author_of?(@question)
     |  |

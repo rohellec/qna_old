@@ -14,7 +14,6 @@ feature "Creating answer", %(
     background do
       sign_in user
       visit question_path(question)
-      click_on "New Answer"
     end
 
     scenario "'New answer' form is rendered on the question's page" do
@@ -48,9 +47,9 @@ feature "Creating answer", %(
   end
 
   context "For non-authenticated user" do
-    scenario "'New Answer' link is not visible on the question's page" do
+    scenario "'New Answer' form is not visible on the question's page" do
       visit question_path(question)
-      expect(page).not_to have_content "New Answer"
+      expect(page).to have_no_css "form#new_answer"
     end
   end
 end
