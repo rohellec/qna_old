@@ -1,5 +1,6 @@
-tr
-  td = answer.body
-  td
-    - if current_user&.author_of?(answer)
-      = link_to "Delete", answer, method: :delete
+- if answer.persisted?
+  tr
+    td = answer.body
+    td
+      - if current_user&.author_of?(answer)
+        = link_to "Delete", answer, method: :delete

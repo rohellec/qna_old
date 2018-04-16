@@ -10,12 +10,12 @@ class AnswersController < ApplicationController
       flash[:success] = "New answer has been successfully created"
       redirect_to @question
     else
-      render "questions/show", hidden: false
+      render "questions/show"
     end
   end
 
   def destroy
-    @answer.delete
+    @answer.destroy
     flash[:success] = "Answer has been successfully deleted"
     redirect_to @answer.question
   end
@@ -33,7 +33,6 @@ class AnswersController < ApplicationController
 
   def set_question
     @question = Question.find(params[:question_id])
-    @user = @question.user
-    @answers = @question.answers.select { |question| question.persisted? }
+    @answers  = @question.answers
   end
 end

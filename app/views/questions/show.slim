@@ -4,7 +4,7 @@ div
   p = @question.body
 
 div
-  - if @answers.any?
+  - if @answers.any?(&:persisted?)
     table
       == render partial: "questions/answer", collection: @answers
   - else
