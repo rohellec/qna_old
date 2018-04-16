@@ -14,13 +14,6 @@ describe AnswersController do
       before { sign_in user }
 
       context "with valid attributes" do
-        it "saves new answer to db" do
-          expect do
-            post :create, params: { question_id: question, answer: valid_attributes }
-          end
-          .to change(Answer, :count).by(1)
-        end
-
         it "creates new answer for question" do
           expect do
             post :create, params: { question_id: question, answer: valid_attributes }
@@ -83,20 +76,6 @@ describe AnswersController do
             delete :destroy, params: { id: user_answer }
           end
           .to change(Answer, :count).by(-1)
-        end
-
-        it "deletes answer from question" do
-          expect do
-            delete :destroy, params: { id: user_answer }
-          end
-          .to change(question.answers, :count).by(-1)
-        end
-
-        it "deletes answer from user" do
-          expect do
-            delete :destroy, params: { id: user_answer }
-          end
-          .to change(user.answers, :count).by(-1)
         end
 
         it "redirects to question's 'show' action" do

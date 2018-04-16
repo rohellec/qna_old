@@ -99,12 +99,6 @@ describe QuestionsController do
       end
 
       context "with valid attributes" do
-        it "saves the new question to db" do
-          expect do
-            post :create, params: { question: valid_attributes }
-          end.to change(Question, :count).by(1)
-        end
-
         it "creates new question for user" do
           expect do
             post :create, params: { question: valid_attributes }
@@ -151,12 +145,6 @@ describe QuestionsController do
           expect do
             delete :destroy, params: { id: user_question }
           end.to change(Question, :count).by(-1)
-        end
-
-        it "deletes question from user" do
-          expect do
-            delete :destroy, params: { id: user_question }
-          end.to change(user.questions, :count).by(-1)
         end
 
         it "redirects to 'index'" do
