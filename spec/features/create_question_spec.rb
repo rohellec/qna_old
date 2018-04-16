@@ -19,8 +19,7 @@ feature "Creating question", %(
       background { click_on "Create Question" }
 
       scenario "'New Question' page is rendered with errors" do
-        expect(page).to have_content "New Question"
-        expect(page).to have_css ".alert", text: "error"
+        expect(page).to have_content "Body can't be blank"
       end
     end
 
@@ -34,6 +33,7 @@ feature "Creating question", %(
       end
 
       scenario "redirects to question_path" do
+        expect(page).to have_content question_attributes[:title]
         expect(page).to have_content question_attributes[:body]
         expect(page).to have_content "New question has been successfully created"
       end

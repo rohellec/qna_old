@@ -26,7 +26,7 @@ feature "Creating answer", %(
 
       scenario "question's page is rendered with errors" do
         expect(page).to have_content question.body
-        expect(page).to have_css ".alert", text: "error"
+        expect(page).to have_content "Body can't be blank"
       end
     end
 
