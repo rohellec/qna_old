@@ -3,5 +3,5 @@ tr
     = link_to question do
       div = question.title
   td
-    - if correct_user?(question.user)
+    - if current_user&.author_of?(question)
       = link_to "Delete", question, method: :delete

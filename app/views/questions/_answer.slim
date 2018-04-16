@@ -1,5 +1,5 @@
 tr
   td = answer.body
   td
-    - if correct_user?(answer.user)
+    - if current_user&.author_of?(answer)
       = link_to "Delete", answer, method: :delete

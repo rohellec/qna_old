@@ -16,11 +16,9 @@ div
     => link_to "New Answer", question_path(@question, new_answer: true)
     | |
 
-  =< link_to "Back", questions_path
-
-  - if correct_user?(@question.user)
-    | |
+  - if current_user&.author_of?(@question)
+    |  |
     =< link_to "Delete", @question, method: :delete
 
-- if @answer
+- if user_signed_in?
   == render "questions/new_answer", question: @question, answer: @answer
