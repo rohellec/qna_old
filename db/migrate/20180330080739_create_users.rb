@@ -4,7 +4,7 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.timestamps
     end
 
-    add_reference :questions, :user, foreign_key: true
-    add_reference :answers,   :user, foreign_key: true
+    add_reference :questions, :user, foreign_key: true, null: true
+    add_reference :answers,   :user, foreign_key: true, null: true
   end
 end
