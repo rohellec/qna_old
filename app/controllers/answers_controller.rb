@@ -28,8 +28,7 @@ class AnswersController < ApplicationController
 
   def correct_user?
     @answer = Answer.find(params[:id])
-    user = @answer.user
-    redirect_to root_path if user != current_user
+    redirect_to root_path unless current_user.author_of?(@answer)
   end
 
   def set_question

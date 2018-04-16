@@ -41,8 +41,7 @@ class QuestionsController < ApplicationController
   end
 
   def correct_user?
-    user = @question.user
-    redirect_to root_path if user != current_user
+    redirect_to root_path unless current_user.author_of?(@question)
   end
 
   def set_question
