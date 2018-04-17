@@ -3,7 +3,7 @@ h1 = @question.title
 div
   p = @question.body
 
-div
+.answers
   - if @answers.any?
     table
       == render @answers
