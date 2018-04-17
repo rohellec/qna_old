@@ -5,12 +5,15 @@ div
 
 div
   - if @answers.any?
-    ul == render partial: "answer", collection: @answers
-  - else
-    p
-      i Nobody has given any answer yet!
+    table
+      == render @answers
 
 div
-  => link_to "New answer", new_question_answer_path(@question)
-  span |
-  =< link_to "Back", questions_path
+  = link_to "Back", questions_path
+
+  - if current_user&.author_of?(@question)
+    |  |
+    =< link_to "Delete", @question, method: :delete
+
+- if user_signed_in?
+  == render "questions/new_answer", question: @question, answer: @answer

@@ -7,4 +7,7 @@ html
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
 
   body
+    == render "common/header"
+    == render "common/flash_messages"
+
     == yield
