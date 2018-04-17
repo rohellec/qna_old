@@ -15,7 +15,8 @@ gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '~> 4.1.6'
-
+# Use jQuery as JavaScript library
+gem 'jquery-rails', '~> 4.3.1'
 # Use Slim as template engine
 gem 'slim-rails', '~> 3.1.3'
 # Use CoffeeScript for .coffee assets and views
