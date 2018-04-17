@@ -35,7 +35,9 @@ class QuestionsController < ApplicationController
   private
 
   def correct_user?
-    redirect_to root_path unless current_user.author_of?(@question)
+    return if current_user.author_of?(@question)
+    flash[:notice] = "You need to be an author of the question"
+    redirect_back(fallback_location: root_url)
   end
 
   def set_question

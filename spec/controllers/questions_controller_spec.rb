@@ -84,7 +84,7 @@ describe QuestionsController do
           end.to change(user.questions, :count).by(1)
         end
 
-        it "redirects to 'show' view" do
+        it "redirects to question_path" do
           post :create, params: { question: valid_attributes }
           expect(response).to redirect_to question_path(assigns(:question))
         end
@@ -141,9 +141,9 @@ describe QuestionsController do
           end.not_to change(Question, :count)
         end
 
-        it "redirects to root_path" do
+        it "redirects to the fallback location root_url" do
           delete :destroy, params: { id: other_user_question }
-          expect(response).to redirect_to root_path
+          expect(response).to redirect_to root_url
         end
       end
     end

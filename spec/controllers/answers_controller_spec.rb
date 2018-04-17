@@ -78,7 +78,7 @@ describe AnswersController do
           .to change(Answer, :count).by(-1)
         end
 
-        it "redirects to question's 'show' action" do
+        it "redirects to question_path" do
           delete :destroy, params: { id: user_answer }
           expect(response).to redirect_to question
         end
@@ -93,9 +93,9 @@ describe AnswersController do
           end.not_to change(Answer, :count)
         end
 
-        it "redirects to root_path" do
+        it "redirects to the fallback location root_url" do
           delete :destroy, params: { id: other_answer }
-          expect(response).to redirect_to root_path
+          expect(response).to redirect_to root_url
         end
       end
     end

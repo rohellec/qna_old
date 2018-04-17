@@ -1,6 +1,7 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_question,  only: :create
+  before_action :set_answer,    only: :destroy
   before_action :correct_user?, only: :destroy
 
   def create
@@ -27,8 +28,13 @@ class AnswersController < ApplicationController
   end
 
   def correct_user?
+    return if current_user.author_of?(@answer)
+    flash[:notice] = "You need to be an author of the answer"
+    redirect_back(fallback_location: root_url)
+  end
+
+  def set_answer
     @answer = Answer.find(params[:id])
-    redirect_to root_path unless current_user.author_of?(@answer)
   end
 
   def set_question
