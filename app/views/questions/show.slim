@@ -4,12 +4,9 @@ div
   p = @question.body
 
 div
-  - if @answers.any?(&:persisted?)
+  - if @answers.any?
     table
-      == render partial: "questions/answer", collection: @answers
-  - else
-    p
-      i Nobody has given any answer yet!
+      == render @answers
 
 div
   = link_to "Back", questions_path
