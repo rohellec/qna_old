@@ -7,7 +7,14 @@ class AnswersController < ApplicationController
   def create
     @answer = @question.answers.build(answer_params)
     @answer.user = current_user
-    @answer.save
+    respond_to do |format|
+      if @answer.save
+        flash[:success] = "New answer has been successfully created"
+        format.js { render layout: false }
+      else
+        format.js { render "error_messages", layout: false }
+      end
+    end
   end
 
   def destroy
