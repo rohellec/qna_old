@@ -44,7 +44,9 @@ end
 
 group :test do
   gem 'capybara', '~> 2.18.0'
-  gem 'launchy',  '~> 2.4.3'
+  gem 'database_cleaner', '~> 1.6.2'
+  gem 'geckodriver-helper', '~> 0.0.5'
+  gem 'launchy', '~> 2.4.3'
   gem 'rails-controller-testing', '~> 1.0.2'
   gem 'selenium-webdriver', '~> 3.11.0 '
   gem 'shoulda-matchers', '~> 3.1.2'
