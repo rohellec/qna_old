@@ -16,35 +16,35 @@ describe AnswersController do
       context "with valid attributes" do
         it "creates new answer for question" do
           expect do
-            post :create, params: { question_id: question, answer: valid_attributes }
+            post :create, params: { question_id: question, answer: valid_attributes }, format: :js
           end
           .to change(question.answers, :count).by(1)
         end
 
         it "creates new answer for user" do
           expect do
-            post :create, params: { question_id: question, answer: valid_attributes }
+            post :create, params: { question_id: question, answer: valid_attributes }, format: :js
           end
           .to change(user.answers, :count).by(1)
         end
 
-        it "redirects to question's 'show' action" do
-          post :create, params: { question_id: question, answer: valid_attributes }
-          expect(response).to redirect_to question
+        it "renders 'create.js' template" do
+          post :create, params: { question_id: question, answer: valid_attributes }, format: :js
+          expect(response).to render_template "create"
         end
       end
 
       context "with invalid attributes" do
         it "doesn't save new answer to db" do
           expect do
-            post :create, params: { question_id: question, answer: invalid_attributes }
+            post :create, params: { question_id: question, answer: invalid_attributes }, format: :js
           end
           .not_to change(Answer, :count)
         end
 
-        it "re-renders 'questions/show' view" do
-          post :create, params: { question_id: question, answer: invalid_attributes }
-          expect(response).to render_template("questions/show")
+        it "renders 'error_messages.js' template" do
+          post :create, params: { question_id: question, answer: invalid_attributes }, format: :js
+          expect(response).to render_template "error_messages"
         end
       end
     end
