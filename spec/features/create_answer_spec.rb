@@ -21,7 +21,7 @@ feature "Creating answer", %(
       expect(page).to have_css "form#new_answer"
     end
 
-    context "without filling answer's mandatory fields" do
+    context "without filling answer's mandatory fields", js: true do
       background { click_on "Create Answer" }
 
       scenario "question's page is rendered with errors" do
@@ -38,7 +38,7 @@ feature "Creating answer", %(
         click_on "Create Answer"
       end
 
-      scenario "Question's page is rendered with new answer added" do
+      scenario "question's page is rendered with new answer added", js: true do
         expect(page).to have_content question.body
         expect(page).to have_content answer_attributes[:body]
         expect(page).to have_content "successfully created"
