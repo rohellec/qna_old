@@ -45,8 +45,9 @@ end
 group :test do
   gem 'capybara', '~> 2.18.0'
   gem 'launchy',  '~> 2.4.3'
-  gem 'shoulda-matchers', '~> 3.1.2'
   gem 'rails-controller-testing', '~> 1.0.2'
+  gem 'selenium-webdriver', '~> 3.11.0 '
+  gem 'shoulda-matchers', '~> 3.1.2'
 end
 
 group :development do
