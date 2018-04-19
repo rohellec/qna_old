@@ -1,5 +1,6 @@
-- flash.each do |type, message|
-  = content_tag :div, class: "alert #{type}", role: "alert" do
-    = message
+.flash
+  - flash.each do |type, message|
+    = content_tag :div, class: "alert #{type}", role: "alert" do
+      = message
 
 

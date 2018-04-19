@@ -1,3 +1,12 @@
 $('#errors').remove();
 $('.answers tbody').append('<%= j render @answer %>');
+
+// Updating flash
+var message = $('<div>', {
+  'class': 'alert success',
+  'text':  '<%= j flash[:success] %>'
+});
+$('.flash').html(message);
+
+// Clear Answer form
 $('#answer_body').val('');
