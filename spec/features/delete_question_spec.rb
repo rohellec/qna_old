@@ -11,10 +11,7 @@ feature "Deleting question", %(
   given!(:other_question) { create(:question) }
 
   context "For authenticated user" do
-    background do
-      user.confirm
-      sign_in user
-    end
+    background { sign_in user }
 
     context "from questions index page" do
       background do
