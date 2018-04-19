@@ -9,8 +9,8 @@ class AnswersController < ApplicationController
     @answer.user = current_user
     respond_to do |format|
       if @answer.save
-        flash[:success] = "New answer has been successfully created"
-        format.js { render layout: false }
+        flash.now[:success] = "New answer has been successfully created"
+        format.js { render "create", layout: false }
       else
         format.js { render "error_messages", layout: false }
       end
