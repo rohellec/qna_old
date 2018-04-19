@@ -4,9 +4,10 @@ div
   p = @question.body
 
 .answers
-  - if @answers.any?
-    table
-      == render @answers
+  table
+    tbody
+      - if @answers.any?
+        == render @answers
 
 div
   = link_to "Back", questions_path
