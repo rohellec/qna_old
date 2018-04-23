@@ -10,7 +10,7 @@ describe AnswersController do
     let(:valid_attributes)   { attributes_for(:answer, user: user) }
     let(:invalid_attributes) { attributes_for(:invalid_answer) }
 
-    context "as authenticated user" do
+    context "when authenticated" do
       before { sign_in user }
 
       context "with valid attributes" do
@@ -49,7 +49,7 @@ describe AnswersController do
       end
     end
 
-    context "as non-authenticated user" do
+    context "when non-authenticated" do
       it "doesn't save new answer to db" do
         expect do
           post :create, params: { question_id: question, answer: valid_attributes }
@@ -65,10 +65,10 @@ describe AnswersController do
   end
 
   describe "DELETE #destroy" do
-    context "as authenticated user" do
+    context "when authenticated" do
       before { sign_in user }
 
-      context "as answer's author" do
+      context "when author" do
         let!(:user_answer)  { create(:answer, question: question, user: user) }
 
         it "deletes answer from db" do
@@ -84,7 +84,7 @@ describe AnswersController do
         end
       end
 
-      context "other user's answer" do
+      context "when is not author" do
         let!(:other_answer) { create(:answer, question: question) }
 
         it "doesn't delete answer from db" do
@@ -100,7 +100,7 @@ describe AnswersController do
       end
     end
 
-    context "as non-authenticated user" do
+    context "when non-authenticated" do
       let!(:answer) { create(:answer) }
 
       it "doesn't delete answer from db" do
