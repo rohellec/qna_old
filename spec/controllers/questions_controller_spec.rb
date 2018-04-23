@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe QuestionsController do
-  let(:user)     { create(:confirmed_user) }
+  let(:user) { create(:confirmed_user) }
 
   before { request.env['devise.mapping'] = Devise.mappings[:user] }
 
@@ -26,11 +26,11 @@ describe QuestionsController do
     before { get :show, params: { id: question } }
 
     it "sets requested question" do
-      expect(assigns(:question)).to eq(question)
+      expect(assigns(:question)).to eq question
     end
 
     it "populates an array of answers for current question" do
-      expect(assigns(:answers)).to match_array(answers)
+      expect(assigns(:answers)).to match_array answers
     end
 
     it "builds new answer" do
@@ -43,7 +43,7 @@ describe QuestionsController do
   end
 
   describe "GET #new" do
-    context "as authenticated user" do
+    context "when authenticated" do
       before do
         sign_in user
         get :new
@@ -58,8 +58,46 @@ describe QuestionsController do
       end
     end
 
-    context "as non-authenticated user" do
+    context "when non-authenticated" do
       before { get :new }
+
+      it "redirects to sign in path" do
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
+  describe "GET #edit" do
+    let(:question) { create(:question) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when author" do
+        let(:user_question) { create(:question, user: user) }
+
+        before { get :edit, params: { id: user_question } }
+
+        it "sets question variable" do
+          expect(assigns(:question)).to eq user_question
+        end
+
+        it "renders 'edit' view" do
+          expect(response).to render_template :edit
+        end
+      end
+
+      context "when is not author" do
+        before { get :edit, params: { id: question } }
+
+        it "redirects to fallback location root_url" do
+          expect(response).to redirect_to root_url
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      before { get :edit, params: { id: question } }
 
       it "redirects to sign in path" do
         expect(response).to redirect_to new_user_session_path
@@ -71,11 +109,8 @@ describe QuestionsController do
     let(:valid_attributes)   { attributes_for(:question, user: user) }
     let(:invalid_attributes) { attributes_for(:invalid_question) }
 
-    context "as authenticated user" do
-      before do
-        sign_in user
-        get :new
-      end
+    context "when authenticated" do
+      before { sign_in user }
 
       context "with valid attributes" do
         it "creates new question for user" do
@@ -104,8 +139,67 @@ describe QuestionsController do
       end
     end
 
-    context "as non-authenticated user" do
+    context "when non-authenticated" do
       before { post :create, params: { question: valid_attributes } }
+
+      it "redirects to sign in path" do
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
+  describe "PATCH #update" do
+    let(:question) { create(:question) }
+    let(:new_attributes) { attributes_for(:question) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when author" do
+        let(:user_question) { create(:question, user: user) }
+
+        context "with valid attributes" do
+          before { patch :edit, params: { id: user_question, question: new_attributes } }
+
+          it "updates question attributes" do
+            user_question.reload
+            expect(user_question.title).to eq new_attributes[:title]
+            expect(user_question.body).to  eq new_attributes[:body]
+          end
+
+          it "redirects to question_path" do
+            expect(response).to redirect_to user_question
+          end
+        end
+
+        context "with invalid attributes" do
+          let(:invalid_attributes) { attributes_for(:invalid_question) }
+
+          before { patch :edit, params: { id: user_question, question: invalid_attributes } }
+
+          it "doesn't update question attributes" do
+            user_question.reload
+            expect(user_question.title).not_to eq new_attributes[:title]
+            expect(user_question.body).not_to  eq new_attributes[:body]
+          end
+
+          it "rerender 'edit' view" do
+            expect(response).to render_template(:edit)
+          end
+        end
+      end
+
+      context "when is not author" do
+        before { patch :edit, params: { id: question, question: new_attributes } }
+
+        it "redirects to fallback location root_url" do
+          expect(response).to redirect_to root_url
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      before { get :edit, params: { id: question, question: new_attributes } }
 
       it "redirects to sign in path" do
         expect(response).to redirect_to new_user_session_path
@@ -116,10 +210,10 @@ describe QuestionsController do
   describe "DELETE #destroy" do
     let!(:user_question) { create(:question, user: user) }
 
-    context "as authenticated user" do
+    context "when authenticated" do
       before { sign_in user }
 
-      context "as a question's author" do
+      context "when author" do
         it "deletes question from db" do
           expect do
             delete :destroy, params: { id: user_question }
@@ -132,7 +226,7 @@ describe QuestionsController do
         end
       end
 
-      context "other user's question" do
+      context "when is not author" do
         let!(:other_user_question) { create(:question) }
 
         it "doesn't delete question from db" do
@@ -148,7 +242,7 @@ describe QuestionsController do
       end
     end
 
-    context "as non-authenticated user" do
+    context "when non-authenticated" do
       it "doesn't delete question from db" do
         expect do
           delete :destroy, params: { id: user_question }
