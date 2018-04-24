@@ -7,10 +7,12 @@
 = form_with model: @question, class: "edit-question" do |form|
   div.field
     = form.label :title
-    = form.text_field :title
+    = form.text_field :title, id: "question_title"
   div.field
     = form.label :body
-    = form.text_area :body
+    = form.text_area :body, id: "question_body"
+  div.actions
+    = form.submit
 
 div
   = link_to "Back", questions_path

@@ -6,16 +6,17 @@ feature "Update question", %(
   I want to be able to update question
 ) do
 
+  given(:question) { create(:question) }
+
   context "when authenticated" do
     given(:user) { create(:confirmed_user) }
-    given(:question) { create(:question) }
 
     background { sign_in user }
 
     context "when author" do
       given(:user_question)  { create(:question, user: user) }
 
-      background { visit user_question }
+      background { visit question_path(user_question) }
 
       scenario "'Edit' link is visible on question_path" do
         expect(page).to have_link "Edit"
@@ -39,7 +40,6 @@ feature "Update question", %(
             visit questions_path
             within ".questions" do
               expect(page).to have_content user_question.title
-              expect(page).to have_content user_question.body
             end
           end
         end
@@ -52,7 +52,7 @@ feature "Update question", %(
           end
 
           scenario "Question page is rendered with updated content" do
-            expect(page).to have_current_path user_question
+            expect(page).to have_current_path question_path(user_question)
             expect(page).to have_content "Updated title"
             expect(page).to have_content "Updated body"
           end
@@ -61,7 +61,6 @@ feature "Update question", %(
             visit questions_path
             within ".questions" do
               expect(page).to have_content "Updated title"
-              expect(page).to have_content "Updated body"
             end
           end
         end
@@ -70,7 +69,7 @@ feature "Update question", %(
 
     context "when is not author" do
       scenario "'Edit' link is visible on question_path" do
-        visit question
+        visit question_path(question)
         expect(page).to have_no_link "Edit"
       end
     end
@@ -78,9 +77,8 @@ feature "Update question", %(
 
   context "when is not authenticated" do
     scenario "'Edit' link is not visible on question_path" do
-      visit question
+      visit question_path(question)
       expect(page).to have_no_link "Edit"
     end
   end
 end
-
