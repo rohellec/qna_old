@@ -1,0 +1,14 @@
+$('.question h1').text('<%= @question.title %>');
+$('.question p' ).text('<%= @question.body %>');
+
+// Updating flash
+var message = $('<div>', {
+  'class': 'alert success',
+  'text':  '<%= j flash[:success] %>'
+});
+$('.flash').html(message);
+
+$('.edit-question').hide();
+$('.question').show();
+
+$('.edit-question-link').removeClass('cancel').text('Edit');
