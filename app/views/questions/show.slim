@@ -1,13 +1,16 @@
-h1 = @question.title
+.question
+  h1 = @question.title
 
-div
-  p = @question.body
+  div
+    p = @question.body
 
-.answers
-  table
-    tbody
-      - if @answers.any?
-        == render @answers
+= form_with model: @question, class: "edit-question" do |form|
+  div.field
+    = form.label :title
+    = form.text_field :title
+  div.field
+    = form.label :body
+    = form.text_area :body
 
 div
   = link_to "Back", questions_path
@@ -15,6 +18,13 @@ div
   - if current_user&.author_of?(@question)
     |  |
     =< link_to "Delete", @question, method: :delete
+    |  |
+    =< link_to "Edit", "", class: "edit-question-link"
+
+table.answers
+  tbody
+    - if @answers.any?
+      == render @answers
 
 - if user_signed_in?
   == render "questions/new_answer", question: @question, answer: @answer
