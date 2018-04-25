@@ -1,7 +1,7 @@
-tr
+tr id="questionId-#{question.id}"
   td
     = link_to question do
       div = question.title
   td
     - if current_user&.author_of?(question)
-      = link_to "Delete", question, method: :delete
+      = link_to "Delete", question, method: :delete, remote: true

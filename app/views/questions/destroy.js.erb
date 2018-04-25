@@ -1,0 +1,17 @@
+$('#questionId-<%= @question.id %>').remove();
+
+// Updating flash
+var success = $('<div>', {
+  'class': 'alert success',
+  'text':  '<%= j flash[:success] %>'
+});
+$('.flash').html(success);
+
+
+<% if !Question.any? %>
+  var noQuestionsMessage = $('<p>', {
+    'text': 'Nobody has asked anything yet!'
+  });
+  var noQuestionsBlock = $('<div>').append(noQuestionsMessage);
+  $('.questions').replaceWith(noQuestionsBlock);
+<% end %>

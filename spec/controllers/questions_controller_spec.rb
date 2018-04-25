@@ -179,6 +179,7 @@ describe QuestionsController do
 
   describe "DELETE #destroy" do
     let!(:user_question) { create(:question, user: user) }
+    let!(:other_user_question) { create(:question) }
 
     context "when authenticated" do
       before { sign_in user }
@@ -190,15 +191,22 @@ describe QuestionsController do
           end.to change(Question, :count).by(-1)
         end
 
-        it "redirects to 'index'" do
-          delete :destroy, params: { id: user_question }
-          expect(response).to redirect_to questions_path
+        context "with HTML request" do
+          it "redirects to 'index'" do
+            delete :destroy, params: { id: user_question }
+            expect(response).to redirect_to questions_path
+          end
+        end
+
+        context "with AJAX request" do
+          it "redirects to 'index'" do
+            delete :destroy, params: { id: user_question }, format: :js
+            expect(response).to render_template("destroy")
+          end
         end
       end
 
       context "when is not author" do
-        let!(:other_user_question) { create(:question) }
-
         it "doesn't delete question from db" do
           expect do
             delete :destroy, params: { id: other_user_question }

@@ -10,10 +10,10 @@ feature "Deleting question", %(
   given!(:user_question)  { create(:question, user: user) }
   given!(:other_question) { create(:question) }
 
-  context "For authenticated user" do
+  context "when authenticated" do
     background { sign_in user }
 
-    context "from questions index page" do
+    describe "from questions index page", js: true do
       background do
         visit questions_path
         within("table") { click_on "Delete" }
@@ -29,7 +29,7 @@ feature "Deleting question", %(
       end
     end
 
-    context "from user's question page" do
+    describe "from user's question page" do
       background do
         visit question_path(user_question)
         click_on "Delete"
@@ -44,7 +44,7 @@ feature "Deleting question", %(
       end
     end
 
-    context "from other user's question page" do
+    describe "from other user's question page" do
       background { visit question_path(other_question) }
 
       scenario "'Delete' link is not visible" do
@@ -53,8 +53,8 @@ feature "Deleting question", %(
     end
   end
 
-  context "as non-authenticated user" do
-    context "from questions index page" do
+  context "when non-authenticated" do
+    describe "from questions index page" do
       background { visit questions_path }
 
       scenario "'Delete' link is not visible" do
@@ -62,7 +62,7 @@ feature "Deleting question", %(
       end
     end
 
-    context "from question's show page" do
+    describe "from question's show page" do
       background { visit question_path(user_question) }
 
       scenario "'Delete' link is not visible" do
