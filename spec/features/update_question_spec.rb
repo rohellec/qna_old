@@ -22,6 +22,40 @@ feature "Update question", %(
         expect(page).to have_link "Edit"
       end
 
+      describe "clicking on 'Edit' link", js: true do
+        background { click_on "Edit" }
+
+        scenario "'Edit Question' form becomes visible" do
+          expect(page).to have_css "form.edit-question"
+          expect(page).to have_no_css ".question"
+        end
+
+        scenario "'Cancel' link becomes visible" do
+          expect(page).to have_link "Cancel"
+          expect(page).to have_no_link "Edit"
+        end
+
+        describe "clicking on 'Cancel' link" do
+          background { click_on "Cancel" }
+
+          scenario "hides 'Edit Question' form" do
+            expect(page).to have_no_content "form.edit-question"
+          end
+
+          scenario "question title and body become visible" do
+            within ".question" do
+              expect(page).to have_content user_question.title
+              expect(page).to have_content user_question.body
+            end
+          end
+
+          scenario "'Edit' link becomes visible" do
+            expect(page).to have_link "Edit"
+            expect(page).to have_no_link "Cancel"
+          end
+        end
+      end
+
       describe "filling form fields", js: true do
         background { click_on "Edit" }
 
@@ -53,11 +87,17 @@ feature "Update question", %(
 
           scenario "Question page is rendered with updated content" do
             expect(page).to have_current_path question_path(user_question)
-            expect(page).to have_content "Updated title"
-            expect(page).to have_content "Updated body"
+            within ".question" do
+              expect(page).to have_content "Updated title"
+              expect(page).to have_content "Updated body"
+            end
           end
 
           scenario "Questions 'index' page is rendered with updated content" do
+            # 'find' causes capybara to wait until '.question' div is shown on the page
+            # which means that js execution is finished.
+            # Without 'find' capybara won't wait, and content on index page isn't updated
+            find(".question")
             visit questions_path
             within ".questions" do
               expect(page).to have_content "Updated title"
