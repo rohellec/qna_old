@@ -18,7 +18,7 @@ feature "Creating answer", %(
 
     scenario "'New answer' form is rendered on the question's page" do
       expect(page).to have_content question.body
-      expect(page).to have_css "form#new_answer"
+      expect(page).to have_css "form.new-answer"
     end
 
     context "without filling answer's mandatory fields", js: true do
