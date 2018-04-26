@@ -18,44 +18,6 @@ feature "Update question", %(
 
       background { visit question_path(user_question) }
 
-      scenario "'Edit' link is visible on question_path" do
-        expect(page).to have_link "Edit"
-      end
-
-      describe "clicking on 'Edit' link", js: true do
-        background { click_on "Edit" }
-
-        scenario "'Edit Question' form becomes visible" do
-          expect(page).to have_css "form.edit-question"
-          expect(page).to have_no_css ".question"
-        end
-
-        scenario "'Cancel' link becomes visible" do
-          expect(page).to have_link "Cancel"
-          expect(page).to have_no_link "Edit"
-        end
-
-        describe "clicking on 'Cancel' link" do
-          background { click_on "Cancel" }
-
-          scenario "hides 'Edit Question' form" do
-            expect(page).to have_no_content "form.edit-question"
-          end
-
-          scenario "question title and body become visible" do
-            within ".question" do
-              expect(page).to have_content user_question.title
-              expect(page).to have_content user_question.body
-            end
-          end
-
-          scenario "'Edit' link becomes visible" do
-            expect(page).to have_link "Edit"
-            expect(page).to have_no_link "Cancel"
-          end
-        end
-      end
-
       describe "filling form fields", js: true do
         background { click_on "Edit" }
 
@@ -71,6 +33,10 @@ feature "Update question", %(
           end
 
           scenario "Question still have its initial content" do
+            # 'find' causes capybara to wait until '#errors' div is shown on the page
+            # which means that js execution is finished.
+            # Without 'find' capybara won't wait, and content on index page isn't updated
+            find("#errors")
             visit questions_path
             within ".questions" do
               expect(page).to have_content user_question.title
