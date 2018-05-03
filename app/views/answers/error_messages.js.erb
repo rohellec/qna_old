@@ -1,2 +1,11 @@
 $('#errors').remove();
-$('.new-answer').prepend('<%= j render "common/error_messages", resource: @answer %>');
+
+var error_messages = '<%= j render "common/error_messages", resource: @answer %>';
+
+<% if @answer.persisted? %>
+  var answerId = <%= @answer.id %>;
+  var answer = $('#answer-' + answerId);
+  answer.find('.edit-answer').prepend(error_messages);
+<% else %>
+  $('.new-answer').prepend(error_messages);
+<% end %>

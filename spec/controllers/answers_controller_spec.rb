@@ -64,6 +64,68 @@ describe AnswersController do
     end
   end
 
+  describe "PATCH #update" do
+    let!(:user_answer) { create(:answer, question: question, user: user) }
+    let(:valid_attributes)   { attributes_for(:answer) }
+    let(:invalid_attributes) { attributes_for(:invalid_answer) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when author" do
+        context "with valid attributes" do
+          before do
+            patch :update, params: { id: user_answer, answer: valid_attributes }, format: :js
+          end
+
+          it "assigns the requested answer" do
+            expect(assigns(:answer)).to eq user_answer
+          end
+
+          it "changes answer body" do
+            user_answer.reload
+            expect(user_answer.body).to eq valid_attributes[:body]
+          end
+
+          it "renders 'update.js' template" do
+            expect(response).to render_template :update
+          end
+        end
+
+        context "with invalid attributes" do
+          before do
+            patch :update, params: { id: user_answer, answer: invalid_attributes }, format: :js
+          end
+
+          it "doesn't update answer body" do
+            user_answer.reload
+            expect(user_answer).not_to eq valid_attributes[:body]
+          end
+
+          it "renders 'error_messages' template" do
+            expect(response).to render_template :error_messages
+          end
+        end
+      end
+
+      context "when is not author" do
+        let!(:answer) { create(:answer) }
+
+        it "redirects to fallback location root_url" do
+          patch :update, params: { id: answer, answer: valid_attributes }
+          expect(response).to redirect_to root_url
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      it "redirects to sign in path" do
+        patch :update, params: { id: user_answer, answer: valid_attributes }
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
   describe "DELETE #destroy" do
     context "when authenticated" do
       before { sign_in user }

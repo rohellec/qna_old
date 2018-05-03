@@ -1,6 +1,15 @@
 - if answer.persisted?
-  tr
-    td = answer.body
+  tr id="answer-#{answer.id}"
+    td
+      p = answer.body
+      - if current_user&.author_of?(answer)
+        = form_with model: answer, class: "edit-answer" do |form|
+          div.field
+            = form.text_area :body, id: :edit_answer_body
+          div.actions
+            = form.submit
     td
       - if current_user&.author_of?(answer)
-        = link_to "Delete", answer, method: :delete
+        => link_to "Edit", "", class: "edit-answer-link", data: { answer_id: answer.id }
+        | |
+        =< link_to "Delete", answer, method: :delete

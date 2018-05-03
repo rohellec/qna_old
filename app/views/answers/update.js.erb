@@ -1,0 +1,14 @@
+var answer = $('#answer-<%= @answer.id %>');
+answer.find('p').text('<%= @answer.body %>');
+
+// Updating flash
+var message = $('<div>', {
+  'class': 'alert success',
+  'text':  '<%= j flash[:success] %>'
+});
+$('.flash').html(message);
+
+answer.find('form').hide();
+answer.find('p').show();
+
+answer.find('.edit-answer-link').removeClass('cancel').text('Edit');
