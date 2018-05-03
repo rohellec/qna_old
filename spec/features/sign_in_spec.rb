@@ -6,7 +6,7 @@ feature "Signing in", %(
   I want to be able to sign in
 ) do
 
-  context "Non-activated user" do
+  describe "non-activated user" do
     given(:user) { create(:user) }
 
     background { log_in user }
@@ -15,7 +15,7 @@ feature "Signing in", %(
       expect(page).to have_content "You have to confirm your email"
     end
 
-    context "after activation" do
+    context "when activated" do
       background do
         user.confirm
         log_in user
@@ -25,7 +25,7 @@ feature "Signing in", %(
         expect(page).to have_content "Signed in successfully"
       end
 
-      context "after signing in" do
+      context "when is signed in" do
         background { click_on "Sign out" }
 
         scenario "is able to sign out" do
@@ -37,7 +37,7 @@ feature "Signing in", %(
     end
   end
 
-  context "Non-signed up user" do
+  describe "non-signed up user" do
     given(:user) { build(:user) }
 
     background { log_in user }
