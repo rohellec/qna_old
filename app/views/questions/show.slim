@@ -28,5 +28,10 @@ table.answers
     - if @answers.any?
       == render @answers
 
+- if @answers.empty?
+  p
+    i Nobody has given any answer yet!
+
+
 - if user_signed_in?
   == render "questions/new_answer", question: @question, answer: @answer
