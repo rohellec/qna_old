@@ -59,9 +59,43 @@ describe QuestionsController do
     end
 
     context "when non-authenticated" do
-      before { get :new }
-
       it "redirects to sign in path" do
+        get :new
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
+  describe "GET #edit" do
+    let(:user_question)  { create(:question, user: user) }
+    let(:other_question) { create(:question) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when author" do
+        before { get :edit, params: { id: user_question } }
+
+        it "assigns the requested question" do
+          expect(assigns(:question)).to eq user_question
+        end
+
+        it "renders 'edit' template" do
+          expect(response).to render_template :edit
+        end
+      end
+
+      context "when is not author" do
+        it "redirects to fallback location root_url" do
+          get :edit, params: { id: other_question}
+          expect(response).to redirect_to root_url
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      it "redirects to sign in path" do
+        get :edit, params: { id: other_question}
         expect(response).to redirect_to new_user_session_path
       end
     end
@@ -112,7 +146,8 @@ describe QuestionsController do
 
   describe "PATCH #update" do
     let(:question) { create(:question) }
-    let(:new_attributes) { attributes_for(:question) }
+    let(:valid_attributes)   { attributes_for(:question) }
+    let(:invalid_attributes) { attributes_for(:invalid_question) }
 
     context "when authenticated" do
       before { sign_in user }
@@ -120,15 +155,19 @@ describe QuestionsController do
       context "when author" do
         let(:user_question) { create(:question, user: user) }
 
-        context "with valid attributes" do
+        context "with valid attributes using html" do
           before do
-            patch :update, params: { id: user_question, question: new_attributes }, format: :js
+            patch :update, params: { id: user_question, question: valid_attributes }
+          end
+
+          it "assigns the requested question" do
+            expect(assigns(:question)).to eq user_question
           end
 
           it "updates question attributes" do
             user_question.reload
-            expect(user_question.title).to eq new_attributes[:title]
-            expect(user_question.body).to  eq new_attributes[:body]
+            expect(user_question.title).to eq valid_attributes[:title]
+            expect(user_question.body).to  eq valid_attributes[:body]
           end
 
           it "redirects to question_path" do
@@ -136,17 +175,47 @@ describe QuestionsController do
           end
         end
 
-        context "with invalid attributes" do
-          let(:invalid_attributes) { attributes_for(:invalid_question) }
+        context "with valid attributes using js" do
+          before do
+            patch :update, params: { id: user_question, question: valid_attributes }, format: :js
+          end
 
+          it "updates question attributes" do
+            user_question.reload
+            expect(user_question.title).to eq valid_attributes[:title]
+            expect(user_question.body).to  eq valid_attributes[:body]
+          end
+
+          it "renders 'update.js' template" do
+            expect(response).to render_template "update"
+          end
+        end
+
+        context "with invalid attributes using html" do
+          before do
+            patch :update, params: { id: user_question, question: invalid_attributes }
+          end
+
+          it "doesn't update question attributes" do
+            user_question.reload
+            expect(user_question.title).not_to eq valid_attributes[:title]
+            expect(user_question.body).not_to  eq valid_attributes[:body]
+          end
+
+          it "renders 'edit' template" do
+            expect(response).to render_template :edit
+          end
+        end
+
+        context "with invalid attributes using js" do
           before do
             patch :update, params: { id: user_question, question: invalid_attributes }, format: :js
           end
 
           it "doesn't update question attributes" do
             user_question.reload
-            expect(user_question.title).not_to eq new_attributes[:title]
-            expect(user_question.body).not_to  eq new_attributes[:body]
+            expect(user_question.title).not_to eq valid_attributes[:title]
+            expect(user_question.body).not_to  eq valid_attributes[:body]
           end
 
           it "renders 'error_messages' template" do
@@ -157,7 +226,7 @@ describe QuestionsController do
 
       context "when is not author" do
         before do
-          patch :update, params: { id: question, question: new_attributes }, format: :js
+          patch :update, params: { id: question, question: valid_attributes }
         end
 
         it "redirects to fallback location root_url" do
@@ -168,7 +237,7 @@ describe QuestionsController do
 
     context "when non-authenticated" do
       before do
-        patch :update, params: { id: question, question: new_attributes }
+        patch :update, params: { id: question, question: valid_attributes }
       end
 
       it "redirects to sign in path" do

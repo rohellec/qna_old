@@ -4,4 +4,6 @@ tr id="questionId-#{question.id}"
       div = question.title
   td
     - if current_user&.author_of?(question)
-      = link_to "Delete", question, method: :delete, remote: true
+      => link_to "Edit", edit_question_path(question)
+      | |
+      =< link_to "Delete", question, method: :delete, remote: true

@@ -1,7 +1,7 @@
 class QuestionsController < ApplicationController
   before_action :authenticate_user!, except: [:show, :index]
-  before_action :set_question,  only: [:show, :update, :destroy]
-  before_action :correct_user?, only: [:update, :destroy]
+  before_action :set_question,  only: [:show, :edit, :update, :destroy]
+  before_action :correct_user?, only: [:edit, :update, :destroy]
 
   def index
     @questions = Question.all
@@ -14,6 +14,9 @@ class QuestionsController < ApplicationController
 
   def new
     @question = Question.new
+  end
+
+  def edit
   end
 
   def create
@@ -30,9 +33,11 @@ class QuestionsController < ApplicationController
     respond_to do |format|
       if @question.update(question_params)
         flash.now[:success] = "Question has been successfully updated"
-        format.js { render "update", layout: false }
+        format.html { redirect_to @question }
+        format.js   { render "update", layout: false }
       else
-        format.js { render "error_messages", layout: false }
+        format.html { render :edit }
+        format.js   { render "error_messages", layout: false }
       end
     end
   end
