@@ -15,6 +15,10 @@ feature "Creating question", %(
       click_on "New Question"
     end
 
+    scenario "'New Question' page is rendered" do
+      expect(page).to have_current_path new_question_path
+    end
+
     context "without filling mandatory fields" do
       background { click_on "Create Question" }
 
@@ -32,7 +36,9 @@ feature "Creating question", %(
         click_on "Create Question"
       end
 
-      scenario "redirects to question_path" do
+      scenario "redirects to newly created question" do
+        created_question = Question.last
+        expect(page).to have_current_path question_path(created_question)
         expect(page).to have_content question_attributes[:title]
         expect(page).to have_content question_attributes[:body]
         expect(page).to have_content "New question has been successfully created"

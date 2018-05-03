@@ -11,33 +11,28 @@ feature "Deleting answer", %(
   given!(:user_answer)  { create(:answer, question: question, user: user) }
   given!(:other_answer) { create(:answer, question: question) }
 
-  context "For authenticated user" do
-    background { sign_in user }
+  context "when authenticated" do
+    background do
+      sign_in user
+      visit question_path(question)
+      within("table") { click_on "Delete" }
+    end
 
-    context "from question's page" do
-      background do
-        visit question_path(question)
-        within("table") { click_on "Delete" }
-      end
+    scenario "user's answer is removed" do
+      expect(page).to have_no_content user_answer.body
+      expect(page).to have_content "Answer has been successfully deleted"
+    end
 
-      scenario "user's answer is removed" do
-        expect(page).to have_no_content user_answer.body
-        expect(page).to have_content "Answer has been successfully deleted"
-      end
-
-      scenario "'Delete' link is not visible for other user's answer" do
-        expect(page).to have_no_selector "td", text: "Delete"
-      end
+    scenario "'Delete' link is not visible for other user's answer" do
+      expect(page).to have_no_selector "td", text: "Delete"
     end
   end
 
-  context "For non-authenticated user" do
-    context "from question's show page" do
-      background { visit question_path(question) }
+  context "when non-authenticated" do
+    background { visit question_path(question) }
 
-      scenario "'Delete' link is not visible" do
-        expect(page).to have_no_link "Delete"
-      end
+    scenario "'Delete' link is not visible" do
+      expect(page).to have_no_link "Delete"
     end
   end
 end

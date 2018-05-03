@@ -17,7 +17,7 @@ feature "Creating answer", %(
     end
 
     scenario "'New answer' form is rendered on the question's page" do
-      expect(page).to have_content question.body
+      expect(page).to have_current_path question_path(question)
       expect(page).to have_css "form.new-answer"
     end
 
@@ -25,12 +25,12 @@ feature "Creating answer", %(
       background { click_on "Create Answer" }
 
       scenario "question's page is rendered with errors" do
-        expect(page).to have_content question.body
+        expect(page).to have_current_path question_path(question)
         expect(page).to have_content "Body can't be blank"
       end
     end
 
-    context "filling all mandatory fields" do
+    context "filling all mandatory fields", js: true do
       given(:answer_attributes) { attributes_for(:answer) }
 
       background do
@@ -38,8 +38,8 @@ feature "Creating answer", %(
         click_on "Create Answer"
       end
 
-      scenario "question's page is rendered with new answer added", js: true do
-        expect(page).to have_content question.body
+      scenario "question's page is rendered with new answer added" do
+        expect(page).to have_current_path question_path(question)
         expect(page).to have_content answer_attributes[:body]
         expect(page).to have_content "successfully created"
       end
@@ -49,7 +49,7 @@ feature "Creating answer", %(
   context "For non-authenticated user" do
     scenario "'New Answer' form is not visible on the question's page" do
       visit question_path(question)
-      expect(page).to have_no_css "form#new_answer"
+      expect(page).to have_no_css "form.new_answer"
     end
   end
 end

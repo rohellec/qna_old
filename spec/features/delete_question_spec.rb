@@ -10,11 +10,10 @@ feature "Deleting question", %(
   given!(:user_question)  { create(:question, user: user) }
   given!(:other_question) { create(:question) }
 
-  context "when authenticated" do
-    background { sign_in user }
-
-    describe "from questions index page", js: true do
+  describe "from questions index page", js: true do
+    context "when authenticated" do
       background do
+        sign_in user
         visit questions_path
         within("table") { click_on "Delete" }
       end
@@ -29,23 +28,8 @@ feature "Deleting question", %(
       end
     end
 
-    describe "from user's question page" do
-      background do
-        visit question_path(user_question)
-        click_on "Delete"
-      end
-
-      scenario "redirects to questions_path" do
-        expect(page).to have_current_path questions_path
-      end
-
-      scenario "user's question is removed" do
-        expect(page).to have_no_content user_question.title
-      end
-    end
-
-    describe "from other user's question page" do
-      background { visit question_path(other_question) }
+    context "when non-authenticated" do
+      background { visit questions_path }
 
       scenario "'Delete' link is not visible" do
         expect(page).to have_no_link "Delete"
@@ -53,16 +37,35 @@ feature "Deleting question", %(
     end
   end
 
-  context "when non-authenticated" do
-    describe "from questions index page" do
-      background { visit questions_path }
+  describe "from question's show page" do
+    context "when authenticated" do
+      background { sign_in user }
 
-      scenario "'Delete' link is not visible" do
-        expect(page).to have_no_link "Delete"
+      context "when author" do
+        background do
+          visit question_path(user_question)
+          click_on "Delete"
+        end
+
+        scenario "redirects to questions_path" do
+          expect(page).to have_current_path questions_path
+        end
+
+        scenario "user's question is removed" do
+          expect(page).to have_no_content user_question.title
+        end
+      end
+
+      context "when is not author" do
+        background { visit question_path(other_question) }
+
+        scenario "'Delete' link is not visible" do
+          expect(page).to have_no_link "Delete"
+        end
       end
     end
 
-    describe "from question's show page" do
+    context "when non-authenticated" do
       background { visit question_path(user_question) }
 
       scenario "'Delete' link is not visible" do

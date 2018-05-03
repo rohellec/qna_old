@@ -9,7 +9,7 @@ feature "Signing up", %(
   given(:user) { build(:user) }
   given(:last_email) { ActionMailer::Base.deliveries.last }
 
-  context "For non-signed up user" do
+  describe "non-signed up user" do
     background do
       visit new_user_registration_path
       fill_in :user_email,    with: user.email
@@ -23,7 +23,7 @@ feature "Signing up", %(
       expect(last_email.to).to include user.email
     end
 
-    context "after following confirmation link" do
+    context "when following confirmation link" do
       background do
         token = last_email.body.match(/confirmation_token=[^"]+/)
         url = "/users/confirmation?#{token}"
@@ -34,14 +34,14 @@ feature "Signing up", %(
         expect(page).to have_content "Your email address has been successfully confirmed"
       end
 
-      context "after account confirmation" do
+      context "when account is confirmed" do
         background { log_in user }
 
         scenario "user is able to sign in" do
           expect(page).to have_content "Signed in successfully"
         end
 
-        context "trying to sign up when already signid in " do
+        context "when already signed in and trying to sign up" do
           scenario "user is redirected" do
             visit new_user_registration_path
             expect(page).to have_current_path root_path
