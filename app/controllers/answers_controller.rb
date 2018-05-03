@@ -1,8 +1,8 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_question,  only: :create
-  before_action :set_answer,    only: :destroy
-  before_action :correct_user?, only: :destroy
+  before_action :set_answer,    only: [:update, :destroy]
+  before_action :correct_user?, only: [:update, :destroy]
 
   def create
     @answer = @question.answers.build(answer_params)
@@ -11,6 +11,17 @@ class AnswersController < ApplicationController
       if @answer.save
         flash.now[:success] = "New answer has been successfully created"
         format.js { render "create", layout: false }
+      else
+        format.js { render "error_messages", layout: false }
+      end
+    end
+  end
+
+  def update
+    respond_to do |format|
+      if @answer.update(answer_params)
+        flash.now[:success] = "Answer has been successfully updated"
+        format.js { render "update", layout: false }
       else
         format.js { render "error_messages", layout: false }
       end
