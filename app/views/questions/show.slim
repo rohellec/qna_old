@@ -23,14 +23,15 @@ div
     |  |
     =< link_to "Edit", "", class: "edit-question-link"
 
-table.answers
-  tbody
-    - if @answers.any?
-      == render @answers
-
-- if @answers.empty?
-  p
-    i Nobody has given any answer yet!
+.answers
+  - if @answers.any?
+    table
+      tbody
+        == render @answers
+  - else
+    div
+      p
+        i Nobody has given any answer yet!
 
 
 - if user_signed_in?
