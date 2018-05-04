@@ -1,5 +1,13 @@
 $('#errors').remove();
-$('.answers tbody').append('<%= j render @answer %>');
+
+var answers = $('.answers tbody');
+
+if (!answers.length) {
+  $('.answers').html('<table><tbody></tbody></table>');
+  answers = $('.answers tbody');
+}
+
+answers.append('<%= j render @answer %>');
 
 // Updating flash
 var message = $('<div>', {
