@@ -8,10 +8,7 @@ var success = $('<div>', {
 $('.flash').html(success);
 
 
-<% if !Question.any? %>
-  var noQuestionsMessage = $('<p>', {
-    'text': 'Nobody has asked anything yet!'
-  });
-  var noQuestionsBlock = $('<div>').append(noQuestionsMessage);
-  $('.questions').replaceWith(noQuestionsBlock);
+<% if Question.none? %>
+  var empty = '<div><p>Nobody has asked anything yet!</p></div>';
+  $('.questions').html(empty);
 <% end %>

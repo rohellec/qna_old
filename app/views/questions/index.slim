@@ -1,9 +1,10 @@
 h1 Questions
 
-div
+.questions
   - if @questions.any?
-    table.questions
-      == render @questions
+    table
+      tbody
+        == render @questions
   - else
     p
       i Nobody has asked anything yet!
