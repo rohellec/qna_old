@@ -30,8 +30,11 @@ class AnswersController < ApplicationController
 
   def destroy
     @answer.destroy
-    flash[:success] = "Answer has been successfully deleted"
-    redirect_to @answer.question
+    @question = @answer.question
+    flash.now[:success] = "Answer has been successfully deleted"
+    respond_to do |format|
+      format.js { render "destroy", layout: false }
+    end
   end
 
   private
