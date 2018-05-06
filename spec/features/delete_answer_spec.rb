@@ -1,9 +1,9 @@
 require "rails_helper"
 
 feature "Deleting answer", %(
-  In order to remove unreliable answers
-  As answers author
-  I want to be able to delete them
+  In order to remove unreliable answer
+  As answer's author
+  I want to be able to delete it
 ) do
 
   given(:question) { create(:question) }
@@ -11,7 +11,7 @@ feature "Deleting answer", %(
   given!(:user_answer)  { create(:answer, question: question, user: user) }
   given!(:other_answer) { create(:answer, question: question) }
 
-  context "when authenticated" do
+  context "when authenticated", js: true do
     background do
       sign_in user
       visit question_path(question)
