@@ -2,8 +2,6 @@ $(document).on('turbolinks:load', function() {
   $('.edit-answer-link').click(function(e) {
     e.preventDefault();
 
-    $('#errors').remove();
-
     var current = $(this);
     var answerId = current.data('answerId');
     var answer = $('#answer-' + answerId);

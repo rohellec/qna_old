@@ -9,6 +9,30 @@ if (!answers.length) {
 
 answers.append('<%= j render @answer %>');
 
+// Adding click-event on Edit link for newly created question
+var answerId = <%= @answer.id %>;
+var answerEditLink = $('#answer-' + answerId + ' .edit-answer-link');
+
+answerEditLink.click(function(e) {
+  e.preventDefault();
+
+  var current = $(this);
+  var answer = $('#answer-' + answerId);
+  var editForm = answer.find('form');
+  var content = answer.find('p');
+
+  if (!current.hasClass('cancel')) {
+    current.addClass('cancel');
+    current.text('Cancel');
+  } else {
+    current.removeClass('cancel');
+    current.text('Edit');
+  }
+
+  editForm.toggle();
+  content.toggle();
+});
+
 // Updating flash
 var message = $('<div>', {
   'class': 'alert success',
