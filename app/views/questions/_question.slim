@@ -1,4 +1,4 @@
-tr id="questionId-#{question.id}"
+tr id="question-#{question.id}" class=("answered" if question.answered?)
   td
     = link_to question do
       div = question.title
