@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Question do
   let(:question) { create(:question) }
+  let(:answer)   { create(:answer, question: question) }
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to have_many(:answers).dependent(:destroy) }
@@ -24,6 +25,28 @@ describe Question do
         answer_two.accept
         expect(question.answers).to eq [answer_two, answer_one]
       end
+    end
+  end
+
+  describe "#accepted_answer" do
+    it "returns accepted answer" do
+      answer.accept
+      expect(question.accepted_answer).to eq answer
+    end
+
+    it "returns nil if no answer were accepted" do
+      expect(question.accepted_answer).to be_nil
+    end
+  end
+
+  describe "#answered?" do
+    it "returns true if there is an accepted answer" do
+      answer.accept
+      expect(question).to be_answered
+    end
+
+    it "returns false if there is no accepted answer" do
+      expect(question).not_to be_answered
     end
   end
 end
