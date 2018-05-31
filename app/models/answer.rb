@@ -7,6 +7,17 @@ class Answer < ApplicationRecord
   validates :body, presence: true
   validate  :unique_acceptance
 
+  def accept
+    question.accepted_answer&.remove_accept
+    update(accepted: true)
+  end
+
+  def remove_accept
+    update(accepted: false)
+  end
+
+  protected
+
   def unique_acceptance
     return unless accepted?
     accepted_answer = Answer.accepted.where(question: question)
