@@ -65,7 +65,7 @@ describe AnswersController do
   end
 
   describe "PATCH #update" do
-    let!(:user_answer) { create(:answer, question: question, user: user) }
+    let(:user_answer) { create(:answer, question: question, user: user) }
     let(:valid_attributes)   { attributes_for(:answer) }
     let(:invalid_attributes) { attributes_for(:invalid_answer) }
 
@@ -133,6 +133,11 @@ describe AnswersController do
       context "when author" do
         let!(:user_answer)  { create(:answer, question: question, user: user) }
 
+        it "assigns the requested answer" do
+          delete :destroy, params: { id: user_answer }, format: :js
+          expect(assigns(:answer)).to eq user_answer
+        end
+
         it "deletes answer from db" do
           expect do
             delete :destroy, params: { id: user_answer }, format: :js
@@ -173,6 +178,110 @@ describe AnswersController do
 
       it "redirects to sign in path" do
         delete :destroy, params: { id: answer }
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
+  describe "POST #accept" do
+    let(:user_question) { create(:question, user: user) }
+    let(:answer) { create(:answer, question: user_question) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when question's author" do
+        before { post :accept, params: { id: answer}, format: :js }
+
+        it "assigns the requested answer" do
+          expect(assigns(:answer)).to eq answer
+        end
+
+        it "sets answer's :accepted attribute to true" do
+          answer.reload
+          expect(answer).to be_accepted
+        end
+
+        it "renders 'accept.js' template" do
+          expect(response).to render_template :accept
+        end
+      end
+
+      context "when is not question's author" do
+        let(:answer) { create(:answer, question: question) }
+
+        before { post :accept, params: { id: answer}, format: :js }
+
+        it "doesn't set answer's :accepted attribute to true" do
+          expect(answer).not_to be_accepted
+        end
+
+        it "redirects to fallback location root_url" do
+          expect(response).to redirect_to root_url
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      before { post :accept, params: { id: answer} }
+
+      it "doesn't set answer's :accepted attribute to true" do
+        expect(answer).not_to be_accepted
+      end
+
+      it "redirects to sign in path" do
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
+  describe "POST #remove_accept" do
+    let(:user_question) { create(:question, user: user) }
+    let(:answer) { create(:accepted_answer, question: user_question) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when question's author" do
+        before { post :remove_accept, params: { id: answer }, format: :js }
+
+        it "assigns the requested answer" do
+          expect(assigns(:answer)).to eq answer
+        end
+
+        it "sets accepted answer's :accepted attribute to false" do
+          answer.reload
+          expect(answer).not_to be_accepted
+        end
+
+        it "renders 'remove_accept.js' template" do
+          expect(response).to render_template :remove_accept
+        end
+      end
+
+      context "when is not question's author" do
+        let(:answer) { create(:accepted_answer, question: question) }
+
+        before { post :accept, params: { id: answer}, format: :js }
+
+        it "doesn't set accepted answer's :accepted attribute to false" do
+          expect(answer).to be_accepted
+        end
+
+        it "redirects to fallback location root_url" do
+          expect(response).to redirect_to root_url
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      before { post :accept, params: { id: answer} }
+
+      it "doesn't set accepted answer's :accepted attribute to false" do
+        expect(answer).to be_accepted
+      end
+
+      it "redirects to sign in path" do
         expect(response).to redirect_to new_user_session_path
       end
     end

@@ -1,8 +1,10 @@
 class AnswersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_question,  only: :create
-  before_action :set_answer,    only: [:update, :destroy]
-  before_action :correct_user?, only: [:update, :destroy]
+  before_action :set_question, only: :create
+  before_action :set_answer,   only: [:update, :destroy, :accept, :remove_accept]
+  before_action :set_answer_question, only: [:destroy, :accept, :remove_accept]
+  before_action :answer_author?,   only: [:update, :destroy]
+  before_action :question_author?, only: [:accept, :remove_accept]
 
   def create
     @answer = @question.answers.build(answer_params)
@@ -30,10 +32,24 @@ class AnswersController < ApplicationController
 
   def destroy
     @answer.destroy
-    @question = @answer.question
     flash.now[:success] = "Answer has been successfully deleted"
     respond_to do |format|
       format.js { render "destroy", layout: false }
+    end
+  end
+
+  def accept
+    @answer.accept
+    respond_to do |format|
+      format.js { render "accept", layout: false }
+    end
+  end
+
+  def remove_accept
+    @answer.remove_accept
+    @answers = @question.answers
+    respond_to do |format|
+      format.js { render "remove_accept", layout: false }
     end
   end
 
@@ -43,14 +59,24 @@ class AnswersController < ApplicationController
     params.require(:answer).permit(:body)
   end
 
-  def correct_user?
+  def answer_author?
     return if current_user.author_of?(@answer)
     flash[:notice] = "You need to be an author of the answer"
     redirect_back(fallback_location: root_url)
   end
 
+  def question_author?
+    return if current_user.author_of?(@question)
+    flash[:notice] = "You need to be an author of the question"
+    redirect_back(fallback_location: root_url)
+  end
+
   def set_answer
     @answer = Answer.find(params[:id])
+  end
+
+  def set_answer_question
+    @question = @answer.question
   end
 
   def set_question
