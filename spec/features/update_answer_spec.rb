@@ -6,11 +6,11 @@ feature "Updating answer", %(
   I want to be able to update answer
 ) do
 
-  given(:question) { create(:question) }
   given(:user) { create(:confirmed_user) }
-  given!(:user_answer) { create(:answer, question: question, user: user) }
+  given(:question) { create(:question) }
+  given!(:answer)  { create(:answer, question: question, user: user) }
 
-  before do
+  background do
     sign_in user
     visit question_path(question)
   end
@@ -19,6 +19,19 @@ feature "Updating answer", %(
     background do
       within ".answers" do
         click_on "Edit"
+      end
+    end
+
+    context "with updated content" do
+      background do
+        fill_in :edit_answer_body, with: "Updated answer"
+        click_on "Update"
+      end
+
+      scenario "Answer is rendered with updated content" do
+        expect(page).to have_content "Updated answer"
+        expect(page).to have_no_content answer.body
+        expect(page).to have_no_css "form.edit-answer"
       end
     end
 
@@ -40,19 +53,7 @@ feature "Updating answer", %(
         # Without 'find' capybara won't wait, and content on index page isn't updated
         find "#errors"
         visit question_path(question)
-        expect(page).to have_content user_answer.body
-      end
-    end
-
-    context "with updated content" do
-      background do
-        fill_in :edit_answer_body, with: "Updated answer"
-        click_on "Update"
-      end
-
-      scenario "Question page is rendered with updated content" do
-        expect(page).to have_content "Updated answer"
-        expect(page).to have_no_css "form.edit-answer"
+        expect(page).to have_content answer.body
       end
     end
   end
