@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Creating question", %(
   In order to get help from community

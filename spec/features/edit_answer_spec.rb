@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Edit question", %(
   In order to update question

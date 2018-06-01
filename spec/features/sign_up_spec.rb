@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Signing up", %(
   In order to be able to sign in

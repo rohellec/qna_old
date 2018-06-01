@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Update question", %(
   In order to add new details to question

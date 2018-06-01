@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Deleting answer", %(
   In order to remove unreliable answer

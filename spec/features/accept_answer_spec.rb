@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Accepting an answer for question", %(
   In order to mark question as answered

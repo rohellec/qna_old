@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Signing in", %(
   In order to be able to ask questions
