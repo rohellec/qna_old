@@ -1,3 +1,10 @@
-.edit-answer {
+.edit-answer,
+.remove-accept-answer-link,
+.accepted .accept-answer-link {
   display: none;
 }
+
+.accepted .remove-accept-answer-link {
+  display: inline;
+}
+

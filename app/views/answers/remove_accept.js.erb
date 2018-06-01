@@ -1,0 +1,13 @@
+// Replacing links for accepted removed answer
+var answer = $('#answer-<%= @answer.id %>');
+answer.removeClass('accepted');
+
+// Marking question as unanswered
+var question = $('.question');
+question.removeClass('answered');
+
+// Restoring initial order of question's answers
+var answers = $('.answers tbody');
+answers.html('<%= j render @answers %>');
+
+question.addClass('unanswered');
