@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Deleting question", %(
   In order to remove unreliable questions

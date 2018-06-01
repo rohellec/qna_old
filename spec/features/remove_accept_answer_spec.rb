@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Removing answer acceptance for a question", %(
   In order to leave question unanswered

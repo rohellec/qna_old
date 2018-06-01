@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Updating answer", %(
   In order to fix errors inside answers

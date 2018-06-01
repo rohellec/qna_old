@@ -1,4 +1,4 @@
-require "rails_helper"
+require "feature_helper"
 
 feature "Visiting show page", %(
   In order to find answer for question
