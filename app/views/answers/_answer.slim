@@ -1,5 +1,11 @@
 - if answer.persisted?
-  tr id="answer-#{answer.id}"
+  tr id="answer-#{answer.id}" class=("accepted" if answer.accepted?)
+    - if current_user&.author_of?(answer.question)
+      td
+        = link_to "Remove accept", remove_accept_answer_path(answer),
+                  class: "remove-accept-answer-link", method: :post, remote: true
+        = link_to "Accept", accept_answer_path(answer),
+                  class: "accept-answer-link", method: :post, remote: true
     td
       p = answer.body
       - if current_user&.author_of?(answer)
