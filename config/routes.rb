@@ -2,11 +2,13 @@ Rails.application.routes.draw do
   devise_for :users
 
   resources :questions do
-    resources :answers, shallow: true, only: [:create, :update, :destroy]
+    resources :answers, shallow: true, only: [:create, :update, :destroy] do
+      member do
+        post "accept"
+        post "remove_accept"
+      end
+    end
   end
 
   root "questions#index"
-
-  post "answers/:id/accept",        to: "answers#accept", as: :accept_answer
-  post "answers/:id/remove_accept", to: "answers#remove_accept", as: :remove_accept_answer
 end
