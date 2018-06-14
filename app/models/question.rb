@@ -6,7 +6,7 @@ class Question < ApplicationRecord
   validates :title, :body, presence: true
 
   def accepted_answer
-    Answer.accepted.find_by(question_id: id)
+    answers.accepted.find_by(question_id: id)
   end
 
   def answered?
