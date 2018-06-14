@@ -22,8 +22,6 @@ class Answer < ApplicationRecord
 
   def unique_acceptance
     return unless accepted?
-    accepted_answer = Answer.accepted.where(question: question)
-    accepted_answer = accepted_answer.where('id != ?', id) if persisted?
-    errors.add(:base, "Only one answer can be accepted") if accepted_answer.exists?
+    errors.add(:base, "Only one answer can be accepted") if question.answered?
   end
 end
