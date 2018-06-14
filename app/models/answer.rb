@@ -8,8 +8,10 @@ class Answer < ApplicationRecord
   validate  :unique_acceptance
 
   def accept
-    question.accepted_answer&.remove_accept
-    update(accepted: true)
+    Answer.transaction do
+      question.accepted_answer&.remove_accept
+      update(accepted: true)
+    end
   end
 
   def remove_accept
