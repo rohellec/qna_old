@@ -3,6 +3,10 @@ div class="question #{ 'answered' if @question.answered? }"
 
   div
     p = @question.body
+    - if @question.attachments.any?
+      div.attachments
+        p Attachments
+        ul == render @question.attachments
 
 = form_with model: @question, class: "edit-question" do |form|
   div.field
@@ -11,6 +15,10 @@ div class="question #{ 'answered' if @question.answered? }"
   div.field
     = form.label :body
     = form.text_area :body, id: "question_body"
+  p Attachments
+  = form.fields_for :attachments do |fields|
+    div.field
+      = fields.file_field :file
   div.actions
     = form.submit
 
