@@ -1,0 +1,20 @@
+== render "common/error_messages", resource: question
+div.field
+  = form.label :title
+  = form.text_field :title, id: "question_title"
+div.field
+  = form.label :body
+  = form.text_area :body, id: "question_body"
+
+div.attachments_fields
+  p Attachments
+  = form.fields_for :attachments do |fields|
+    div.nested_fields
+      - if fields.object.file.blank?
+        = fields.label :file, "File"
+      - else
+        = fields.label :file, fields.object.file.basename
+      = fields.file_field :file
+
+div.actions
+  = form.submit

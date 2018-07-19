@@ -1,5 +1,5 @@
 class FileUploader < CarrierWave::Uploader::Base
-  delegate :identifier, to: :file
+  delegate :filename, :basename, to: :file
 
   storage :file
 

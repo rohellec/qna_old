@@ -14,3 +14,19 @@
 //= require rails-ujs
 //= require turbolinks
 //= require_tree .
+//= require_self
+
+$(document).on('turbolinks:load', function() {
+  $('.nested_fields').change(function() {
+    var current = $(this);
+    var input = current.find('input');
+    var label = current.find('label');
+    var name  = basename(input.val());
+    label.text(name);
+  });
+});
+
+function basename(filename) {
+  return filename.replace(/\\/g, '/')
+                 .replace(/(^.*\/)|(\.\w*$)/g, '');
+}
