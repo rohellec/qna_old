@@ -1,6 +1,7 @@
 h1 Edit Question
 
-== render "form", question: @question
+= form_with model: @question, data: { remote: false } do |form|
+  == render "question_fields", form: form, question: @question
 
 div
   = link_to "Back", questions_path

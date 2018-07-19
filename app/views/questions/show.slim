@@ -1,26 +1,17 @@
 div class="question #{ 'answered' if @question.answered? }"
-  h1 = @question.title
+  h1.question-title
+    = @question.title
 
   div
-    p = @question.body
+    p.question-body
+      = @question.body
     - if @question.attachments.any?
       div.attachments
         p Attachments
         ul == render @question.attachments
 
 = form_with model: @question, class: "edit-question" do |form|
-  div.field
-    = form.label :title
-    = form.text_field :title, id: "question_title"
-  div.field
-    = form.label :body
-    = form.text_area :body, id: "question_body"
-  p Attachments
-  = form.fields_for :attachments do |fields|
-    div.field
-      = fields.file_field :file
-  div.actions
-    = form.submit
+  == render "question_fields", form: form, question: @question
 
 div
   = link_to "Back", questions_path
