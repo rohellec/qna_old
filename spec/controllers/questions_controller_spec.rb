@@ -137,6 +137,16 @@ describe QuestionsController do
           expect(response).to render_template :new
         end
       end
+
+      context "with nested attachments attributes" do
+        let(:attributes) { attributes_for(:question_with_attachment, user: user) }
+
+        it "creates new attachment as well as question" do
+          expect do
+            post :create, params: { question: attributes }
+          end.to change(Attachment, :count).by(1)
+        end
+      end
     end
 
     context "when non-authenticated" do
@@ -224,6 +234,28 @@ describe QuestionsController do
 
           it "renders 'error_messages' template" do
             expect(response).to render_template(:error_messages)
+          end
+        end
+
+        context "with nested attachments attributes using html" do
+          let!(:attachment) { create(:attachment, question: user_question) }
+          let(:attributes) do
+            attachments_attributes = [
+              attributes_for(:attachment,
+                id: attachment.id,
+                file: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/test2.png"))
+              )
+            ]
+            attributes_for(:question, attachments_attributes: attachments_attributes)
+          end
+
+          before do
+            patch :update, params: { id: user_question, question: attributes }
+          end
+
+          it "updates attachment attributes" do
+            attachment.reload
+            expect(attachment.file.filename).to eq "test2.png"
           end
         end
       end

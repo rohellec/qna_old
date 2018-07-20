@@ -33,9 +33,14 @@ class QuestionsController < ApplicationController
   def update
     respond_to do |format|
       if @question.update(question_params)
-        flash.now[:success] = "Question has been successfully updated"
-        format.html { redirect_to @question }
-        format.js   { render "update", layout: false }
+        format.html do
+          flash[:success] = "Question has been successfully updated"
+          redirect_to @question
+        end
+        format.js do
+          flash.now[:success] = "Question has been successfully updated"
+          render "update", layout: false
+        end
       else
         format.html { render :edit }
         format.js   { render "error_messages", layout: false }
@@ -71,6 +76,6 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:title, :body, attachments_attributes: [:file])
+    params.require(:question).permit(:title, :body, attachments_attributes: [:id, :file])
   end
 end
