@@ -1,12 +1,12 @@
 require "feature_helper"
 
-feature "Adding attachment question", %(
+feature "Adding attachment to question", %(
   In order to better explain a question
   As a question's author
   I want to be able to attach file to question
 ) do
 
-  given!(:user) { create(:confirmed_user) }
+  given(:user) { create(:confirmed_user) }
   given(:question_attributes) { attributes_for(:question, user: user) }
 
   background do
@@ -36,7 +36,8 @@ feature "Adding attachment question", %(
     scenario "adds file to the created question" do
       expect(page).to have_content "New question has been successfully created"
       within ".attachments" do
-        expect(page).to have_link "test.png", href: '/uploads/attachment/file/1/test.png'
+        expect(page).to have_link "test.png",
+                                  href: "/uploads/attachment/file/#{last_attachment.id}/test.png"
       end
     end
   end

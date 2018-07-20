@@ -6,6 +6,10 @@ FactoryBot.define do
     title { generate(:question_title) }
     body  { generate(:question_body)  }
     user
+
+    factory :question_with_attachment do
+      attachments_attributes { [attributes_for(:attachment)] }
+    end
   end
 
   factory :invalid_question, class: Question do

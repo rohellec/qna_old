@@ -1,5 +1,5 @@
-$('.question h1').text('<%= @question.title %>');
-$('.question p' ).text('<%= @question.body %>');
+$('.question-title').text('<%= @question.title %>');
+$('.question-body' ).text('<%= @question.body %>');
 
 // Updating flash
 var message = $('<div>', {
@@ -7,6 +7,9 @@ var message = $('<div>', {
   'text':  '<%= j flash[:success] %>'
 });
 $('.flash').html(message);
+
+var attachments = $('.attachments ul');
+attachments.html('<%= j render @question.attachments %>');
 
 $('.edit-question').hide();
 $('.question').show();
