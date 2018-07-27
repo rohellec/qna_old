@@ -24,8 +24,10 @@ feature "Updating answer", %(
 
     context "with updated content" do
       background do
-        fill_in :edit_answer_body, with: "Updated answer"
-        click_on "Update"
+        within ".edit-answer" do
+          fill_in "answer[body]", with: "Updated answer"
+          click_on "Update"
+        end
       end
 
       scenario "Answer is rendered with updated content" do
@@ -37,8 +39,8 @@ feature "Updating answer", %(
 
     context "with empty string" do
       background do
-        within ".answers" do
-          fill_in :edit_answer_body, with: ""
+        within ".edit-answer" do
+          fill_in "answer[body]", with: ""
           click_on "Update"
         end
       end

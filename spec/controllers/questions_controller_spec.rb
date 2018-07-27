@@ -34,7 +34,11 @@ describe QuestionsController do
     end
 
     it "builds new answer" do
-      expect(assigns(:answer)).to be_a_new Answer
+      expect(assigns(:answer)).to be_a_new(Answer)
+    end
+
+    it "builds attachment for new answer" do
+      expect(assigns(:answer).attachments.first).to be_a_new(Attachment)
     end
 
     it "renders 'show' view" do
@@ -91,7 +95,7 @@ describe QuestionsController do
 
       context "when is not author" do
         it "redirects to fallback location root_url" do
-          get :edit, params: { id: other_question}
+          get :edit, params: { id: other_question }
           expect(response).to redirect_to root_url
         end
       end
@@ -99,7 +103,7 @@ describe QuestionsController do
 
     context "when non-authenticated" do
       it "redirects to sign in path" do
-        get :edit, params: { id: other_question}
+        get :edit, params: { id: other_question }
         expect(response).to redirect_to new_user_session_path
       end
     end
@@ -141,7 +145,7 @@ describe QuestionsController do
       context "with nested attachments attributes" do
         let(:attributes) { attributes_for(:question_with_attachment, user: user) }
 
-        it "creates new attachment as well as question" do
+        it "creates new question attachment" do
           expect do
             post :create, params: { question: attributes }
           end.to change(Attachment, :count).by(1)
@@ -237,11 +241,12 @@ describe QuestionsController do
           end
         end
 
-        context "with nested attachments attributes using html" do
-          let!(:attachment) { create(:attachment, question: user_question) }
+        context "with nested attachments attributes" do
+          let(:attachment) { create(:question_attachment, attachable: user_question) }
           let(:attributes) do
             attachments_attributes = [
-              attributes_for(:attachment,
+              attributes_for(
+                :attachment,
                 id: attachment.id,
                 file: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/test2.png"))
               )

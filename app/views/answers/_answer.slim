@@ -7,11 +7,20 @@
         = link_to "Accept", accept_answer_path(answer),
                   class: "accept-answer-link", method: :post, remote: true
     td
-      p = answer.body
+      p.answer-body
+        = answer.body
+        - if answer.attachments.any?
+          div.answer-attachments
+            p Attachments
+            ul == render answer.attachments
+
       - if current_user&.author_of?(answer)
         = form_with model: answer, class: "edit-answer" do |form|
           div.field
-            = form.text_area :body, id: :edit_answer_body
+            = form.text_area :body
+
+          == render "attachments/attachment_fields", form: form
+
           div.actions
             = form.submit
     td

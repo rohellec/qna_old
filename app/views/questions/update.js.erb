@@ -8,7 +8,7 @@ var message = $('<div>', {
 });
 $('.flash').html(message);
 
-var attachments = $('.attachments ul');
+var attachments = $('.question-attachments ul');
 attachments.html('<%= j render @question.attachments %>');
 
 $('.edit-question').hide();

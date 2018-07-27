@@ -5,5 +5,8 @@ div
     div.field
       = form.label :body
       = form.text_area :body, id: :answer_body
+
+    == render "attachments/attachment_fields", form: form
+
     div.actions
       = form.submit

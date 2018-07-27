@@ -7,7 +7,7 @@ feature "Adding attachment to question", %(
 ) do
 
   given(:user) { create(:confirmed_user) }
-  given(:question_attributes) { attributes_for(:question, user: user) }
+  given(:question_attributes) { attributes_for(:question) }
 
   background do
     sign_in user
@@ -23,7 +23,7 @@ feature "Adding attachment to question", %(
 
     scenario "doesn't add any attachment to the created question" do
       expect(page).to have_content "New question has been successfully created"
-      expect(page).to have_no_css  ".attachments"
+      expect(page).to have_no_css  ".question-attachments"
     end
   end
 
@@ -35,7 +35,7 @@ feature "Adding attachment to question", %(
 
     scenario "adds file to the created question" do
       expect(page).to have_content "New question has been successfully created"
-      within ".attachments" do
+      within ".question-attachments" do
         expect(page).to have_link "test.png",
                                   href: "/uploads/attachment/file/#{last_attachment.id}/test.png"
       end
