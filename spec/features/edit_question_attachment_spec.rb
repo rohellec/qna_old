@@ -39,7 +39,7 @@ feature "Edit question's attachment", %(
     end
 
     scenario "changing attachment will change it's label", js: true do
-      within ".attachments_fields" do
+      within ".edit-question .attachments_fields" do
         expect(page).to have_content "test2"
       end
     end

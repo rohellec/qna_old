@@ -8,7 +8,7 @@ FactoryBot.define do
     user
 
     factory :question_with_attachment do
-      attachments_attributes { [attributes_for(:attachment)] }
+      attachments_attributes { [attributes_for(:question_attachment)] }
     end
   end
 

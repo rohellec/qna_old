@@ -47,6 +47,16 @@ describe AnswersController do
           expect(response).to render_template "error_messages"
         end
       end
+
+      context "with nested attachments attributes" do
+        let(:attributes) { attributes_for(:answer_with_attachment, user: user) }
+
+        it "creates new answer attachment" do
+          expect do
+            post :create, params: { question_id: question, answer: attributes }, format: :js
+          end.to change(Attachment, :count).by(1)
+        end
+      end
     end
 
     context "when non-authenticated" do
@@ -104,6 +114,29 @@ describe AnswersController do
 
           it "renders 'error_messages' template" do
             expect(response).to render_template :error_messages
+          end
+        end
+
+        context "with nested attachments attributes" do
+          let(:attachment) { create(:answer_attachment, attachable: user_answer) }
+          let(:attributes) do
+            attachments_attributes = [
+              attributes_for(
+                :attachment,
+                id: attachment.id,
+                file: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/test2.png"))
+              )
+            ]
+            attributes_for(:answer, attachments_attributes: attachments_attributes)
+          end
+
+          before do
+            patch :update, params: { id: user_answer, answer: attributes }, format: :js
+          end
+
+          it "updates attachment attributes" do
+            attachment.reload
+            expect(attachment.file.filename).to eq "test2.png"
           end
         end
       end
@@ -191,7 +224,7 @@ describe AnswersController do
       before { sign_in user }
 
       context "when question's author" do
-        before { post :accept, params: { id: answer}, format: :js }
+        before { post :accept, params: { id: answer }, format: :js }
 
         it "assigns the requested answer" do
           expect(assigns(:answer)).to eq answer
@@ -210,7 +243,7 @@ describe AnswersController do
       context "when is not question's author" do
         let(:answer) { create(:answer, question: question) }
 
-        before { post :accept, params: { id: answer}, format: :js }
+        before { post :accept, params: { id: answer }, format: :js }
 
         it "doesn't set answer's :accepted attribute to true" do
           expect(answer).not_to be_accepted
@@ -223,7 +256,7 @@ describe AnswersController do
     end
 
     context "when non-authenticated" do
-      before { post :accept, params: { id: answer} }
+      before { post :accept, params: { id: answer } }
 
       it "doesn't set answer's :accepted attribute to true" do
         expect(answer).not_to be_accepted
@@ -262,7 +295,7 @@ describe AnswersController do
       context "when is not question's author" do
         let(:answer) { create(:accepted_answer, question: question) }
 
-        before { post :accept, params: { id: answer}, format: :js }
+        before { post :accept, params: { id: answer }, format: :js }
 
         it "doesn't set accepted answer's :accepted attribute to false" do
           expect(answer).to be_accepted
@@ -275,7 +308,7 @@ describe AnswersController do
     end
 
     context "when non-authenticated" do
-      before { post :accept, params: { id: answer} }
+      before { post :accept, params: { id: answer } }
 
       it "doesn't set accepted answer's :accepted attribute to false" do
         expect(answer).to be_accepted

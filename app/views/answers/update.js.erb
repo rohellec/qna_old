@@ -8,6 +8,9 @@ var message = $('<div>', {
 });
 $('.flash').html(message);
 
+var attachments = answer.find('.answer-attachments ul');
+attachments.html('<%= j render @answer.attachments %>');
+
 answer.find('form').hide();
 answer.find('p').show();
 

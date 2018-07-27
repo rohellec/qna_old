@@ -6,7 +6,7 @@ div class="question #{ 'answered' if @question.answered? }"
     p.question-body
       = @question.body
     - if @question.attachments.any?
-      div.attachments
+      div.question-attachments
         p Attachments
         ul == render @question.attachments
 

@@ -2,7 +2,7 @@ class Question < ApplicationRecord
   belongs_to :user
   has_many   :answers, -> { order({ accepted: :desc, created_at: :asc }) },
              dependent: :destroy
-  has_many   :attachments, dependent: :destroy
+  has_many   :attachments, as: :attachable, inverse_of: :attachable, dependent: :destroy
 
   accepts_nested_attributes_for :attachments, allow_destroy: true
 
