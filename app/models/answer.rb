@@ -6,7 +6,8 @@ class Answer < ApplicationRecord
 
   has_many :attachments, as: :attachable, inverse_of: :attachable, dependent: :destroy
 
-  accepts_nested_attributes_for :attachments, allow_destroy: true
+  accepts_nested_attributes_for :attachments, allow_destroy: true,
+                                reject_if: -> (attributes) { attributes['file'].blank? }
 
   validates :body, presence: true
   validate  :unique_acceptance

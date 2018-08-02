@@ -1,0 +1,8 @@
+div.attachments_fields
+  p Attachments
+  = form.fields_for :attachments do |fields|
+    == render "attachments/attachment_fields", fields: fields
+  div
+    = link_to_add_association "Add Attachment", form, :attachments,
+        form_name: :fields,
+        partial: "attachments/attachment_fields"

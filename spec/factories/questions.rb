@@ -10,6 +10,15 @@ FactoryBot.define do
     factory :question_with_attachment do
       attachments_attributes { [attributes_for(:question_attachment)] }
     end
+
+    factory :question_with_attachments do
+      attachments_attributes do
+        [
+          attributes_for(:question_attachment),
+          attributes_for(:question_attachment)
+        ]
+      end
+    end
   end
 
   factory :invalid_question, class: Question do
