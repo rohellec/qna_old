@@ -1,0 +1,13 @@
+= form_with model: question, class: css_class, local: local do |form|
+  == render "common/error_messages", resource: question
+  div.field
+    = form.label :title
+    = form.text_field :title, id: "question_title"
+  div.field
+    = form.label :body
+    = form.text_area :body, id: "question_body"
+
+  == render "attachments/attachments_fields", form: form
+
+  div.actions
+    = form.submit

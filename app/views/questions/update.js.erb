@@ -1,5 +1,9 @@
-$('.question-title').text('<%= @question.title %>');
-$('.question-body' ).text('<%= @question.body %>');
+var question = $('.question');
+var questionTitle = question.find('.question-title');
+var questionText  = question.find('.question-body p').first();
+
+questionTitle.text('<%= @question.title %>');
+questionText.text('<%= @question.body %>');
 
 // Updating flash
 var message = $('<div>', {
@@ -8,10 +12,28 @@ var message = $('<div>', {
 });
 $('.flash').html(message);
 
-var attachments = $('.question-attachments ul');
-attachments.html('<%= j render @question.attachments %>');
+var attachments = question.find('.question-attachments');
+<% if @question.attachments.any? %>
+  if (!attachments.length) {
+    questionText.after(
+      '<div class="question-attachments">' +
+        '<p>Attachments</p>' +
+        '<ul></ul>' +
+      '</div>'
+    );
+    attachments = $('.question-attachments');
+  }
+  var attachmentsList = attachments.find('ul');
+  attachmentsList.html('<%= j render @question.attachments %>');
+<% else %>
+  attachments.remove();
+<% end %>
 
-$('.edit-question').hide();
-$('.question').show();
+var questionForm = $('.edit-question');
+questionForm.replaceWith(
+  '<%= j render "form", question: @question, local: false, css_class: "edit-question" %>'
+);
+questionForm.hide();
+question.show();
 
 $('.edit-question-link').removeClass('cancel').text('Edit');

@@ -13,11 +13,12 @@
 //= require jquery
 //= require rails-ujs
 //= require turbolinks
+//= require cocoon
 //= require_tree .
 //= require_self
 
-$(document).on('turbolinks:load', function() {
-  $('.nested_fields').change(function() {
+$(document).on('turbolinks:load cocoon:after-insert', function() {
+  $('.nested-fields').change(function() {
     var current = $(this);
     var input = current.find('input');
     var label = current.find('label');
