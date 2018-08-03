@@ -18,13 +18,13 @@ feature "Edit answer's attachment", %(
     end
   end
 
-  scenario "changing attachment will change it's label", js: true do
+  scenario "changing attachment will change it's label" do
     within ".edit-answer .attachments_fields" do
       expect(page).to have_content "test2"
     end
   end
 
-  scenario "submitting form with new attachment updates file on answer" do
+  scenario "submitting the form updates file on the answer" do
     click_on "Update Answer"
     expect(page).to have_content "Answer has been successfully updated"
     expect(page).to have_link "test2.png",

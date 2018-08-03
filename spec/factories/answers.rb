@@ -13,6 +13,15 @@ FactoryBot.define do
     factory :answer_with_attachment do
       attachments_attributes { [attributes_for(:answer_attachment)] }
     end
+
+    factory :answer_with_attachments do
+      attachments_attributes do
+        [
+          attributes_for(:answer_attachment),
+          attributes_for(:answer_attachment)
+        ]
+      end
+    end
   end
 
   factory :invalid_answer, class: Answer do

@@ -1,0 +1,8 @@
+= form_with model: answer, class: css_class do |form|
+  div.field
+    = form.text_area :body
+
+  == render "attachments/attachments_fields", form: form
+
+  div.actions
+    = form.submit
