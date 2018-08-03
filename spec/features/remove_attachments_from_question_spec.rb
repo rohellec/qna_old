@@ -37,7 +37,7 @@ feature "Removing attachment from question", %(
         click_on "Update Question"
       end
 
-      scenario "question attachments are empty" do
+      scenario "it is deleted from question" do
         expect(page).to have_content "Question has been successfully updated"
         expect(page).to have_css     ".question-attachments"
         expect(page).to have_no_css  "#attachment-#{attachment_id}"
@@ -74,7 +74,7 @@ feature "Removing attachment from question", %(
         click_on "Update Question"
       end
 
-      scenario "question attachments are empty" do
+      scenario "it is deleted from question" do
         expect(page).to have_content "Question has been successfully updated"
         expect(page).to have_css     ".question-attachments"
         expect(page).to have_no_css  "#attachment-#{attachment_id}"

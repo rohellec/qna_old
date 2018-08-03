@@ -8,8 +8,8 @@ module FeatureMacros
     click_on "Log in"
   end
 
-  def add_attachment(attachment, label = "File")
+  def add_attachment(attachment)
     click_on "Add Attachment"
-    attach_file label, Rails.root.join("spec/fixtures/#{attachment}")
+    attach_file "File", Rails.root.join("spec/fixtures/#{attachment}")
   end
 end

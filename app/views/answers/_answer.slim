@@ -6,23 +6,18 @@
                   class: "remove-accept-answer-link", method: :post, remote: true
         = link_to "Accept", accept_answer_path(answer),
                   class: "accept-answer-link", method: :post, remote: true
-    td
-      p.answer-body
+
+    td.answer-body
+      p
         = answer.body
-        - if answer.attachments.any?
-          div.answer-attachments
-            p Attachments
-            ul == render answer.attachments
+      - if answer.attachments.any?
+        div.answer-attachments
+          p Attachments
+          ul == render answer.attachments
 
       - if current_user&.author_of?(answer)
-        = form_with model: answer, class: "edit-answer" do |form|
-          div.field
-            = form.text_area :body
+        == render "answers/form", answer: answer, css_class: "edit-answer"
 
-          == render "attachments/attachments_fields", form: form
-
-          div.actions
-            = form.submit
     td
       - if current_user&.author_of?(answer)
         => link_to "Edit", "", class: "edit-answer-link", data: { answer_id: answer.id }
