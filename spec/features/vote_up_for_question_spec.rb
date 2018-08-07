@@ -37,7 +37,7 @@ feature "Voting up for question", %(
 
       scenario "after voting up 'Up vote' link is disabled" do
         within ".question-rating" do
-          expect(page).to have_content 1
+          expect(page).to have_link "Up vote", disabled: true
         end
       end
     end

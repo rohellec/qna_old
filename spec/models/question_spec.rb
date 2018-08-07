@@ -3,6 +3,8 @@ require 'rails_helper'
 describe Question do
   let(:question) { create(:question) }
   let(:answer)   { create(:answer, question: question) }
+  let(:user)     { create(:user) }
+
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to have_many(:answers).dependent(:destroy) }
@@ -50,6 +52,35 @@ describe Question do
 
     it "returns false if there is no accepted answer" do
       expect(question).not_to be_answered
+    end
+  end
+
+  describe "#up_vote_by" do
+    let(:vote) { question.votes.last }
+
+    it "creates new vote for question" do
+      expect { question.up_vote_by user }.to change(question.votes, :count).by 1
+    end
+
+    it "creates vote with value eq to 1" do
+      question.up_vote_by user
+      expect(vote.value).to eq 1
+    end
+
+    it "doesn't create more than one up-vote by one user" do
+      question.up_vote_by user
+      expect { question.up_vote_by user }.not_to change(question.votes, :count).by 1
+    end
+  end
+
+  describe "#vote_rating" do
+    it "is increased after voting for question" do
+      expect { question.up_vote_by user }.to change(question, :vote_rating).by 1
+    end
+
+    it "is not increased when user votes for question twice" do
+      question.up_vote_by user
+      expect { question.up_vote_by user }.not_to change(question, :vote_rating).by 1
     end
   end
 end
