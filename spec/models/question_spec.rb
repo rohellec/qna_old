@@ -1,14 +1,16 @@
 require 'rails_helper'
 
 describe Question do
+  let(:user) { create(:user) }
   let(:question) { create(:question) }
-  let(:answer)   { create(:answer, question: question) }
-  let(:user)     { create(:user) }
+  let(:user_question) { create(:question, user: user) }
+  let(:answer) { create(:answer, question: question) }
 
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to have_many(:answers).dependent(:destroy) }
   it { is_expected.to have_many(:attachments).dependent(:destroy) }
+  it { is_expected.to have_many(:votes).dependent(:destroy) }
 
   it { is_expected.to accept_nested_attributes_for(:attachments) }
 
@@ -55,32 +57,29 @@ describe Question do
     end
   end
 
-  describe "#up_vote_by" do
-    let(:vote) { question.votes.last }
-
-    it "creates new vote for question" do
-      expect { question.up_vote_by user }.to change(question.votes, :count).by 1
+  describe "#up_voted_by?" do
+    it "returns true if there is an up-vote by user" do
+      create(:question_up_vote, votable: question, user: user)
+      expect(question.up_voted_by?(user)).to be_truthy
     end
 
-    it "creates vote with value eq to 1" do
-      question.up_vote_by user
-      expect(vote.value).to eq 1
-    end
-
-    it "doesn't create more than one up-vote by one user" do
-      question.up_vote_by user
-      expect { question.up_vote_by user }.not_to change(question.votes, :count).by 1
+    it "returns false if there is no up-vote by user" do
+      expect(question.up_voted_by?(user)).to be_falsey
     end
   end
 
   describe "#vote_rating" do
     it "is increased after voting for question" do
-      expect { question.up_vote_by user }.to change(question, :vote_rating).by 1
+      expect { user.up_vote question }.to change(question, :vote_rating).by 1
     end
 
-    it "is not increased when user votes for question twice" do
-      question.up_vote_by user
-      expect { question.up_vote_by user }.not_to change(question, :vote_rating).by 1
+    it "is not increased when user votes for it's own question" do
+      expect { user.up_vote user_question }.not_to change(question, :vote_rating)
+    end
+
+    it "is not increased when user votes for question twice in a row" do
+      user.up_vote question
+      expect { user.up_vote question }.not_to change(question, :vote_rating)
     end
   end
 end

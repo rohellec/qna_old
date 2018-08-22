@@ -2,6 +2,15 @@ div class="question #{ 'answered' if @question.answered? }"
   h1.question-title
     = @question.title
 
+  div.question-vote
+    - if @question.up_voted_by?(current_user)
+      = link_to "delete vote", delete_vote_question_path(@question), class: "up-vote up-voted",
+                method: :delete, remote: true
+    - else
+      = link_to "up vote", up_vote_question_path(@question), class: "up-vote",
+                method: :post, remote: true
+    span.vote-rating = @question.vote_rating
+
   div.question-body
     p = @question.body
     - if @question.attachments.any?
