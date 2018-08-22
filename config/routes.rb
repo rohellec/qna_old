@@ -8,6 +8,12 @@ Rails.application.routes.draw do
         post "remove_accept"
       end
     end
+
+    member do
+      post   "up_vote",     defaults: { votable: :question }
+      post   "down_vote",   defaults: { votable: :question }
+      delete "delete_vote", defaults: { votable: :question }
+    end
   end
 
   root "questions#index"

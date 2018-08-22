@@ -53,10 +53,6 @@ describe QuestionsController do
         expect(assigns(:question)).to be_a_new(Question)
       end
 
-      it "builds attachmanet for new question" do
-        expect(assigns(:question).attachments.first).to be_a_new(Attachment)
-      end
-
       it "renders 'new' view" do
         expect(response).to render_template :new
       end
@@ -335,6 +331,170 @@ describe QuestionsController do
 
       it "redirects to sign in path" do
         delete :destroy, params: { id: user_question }
+        expect(response).to redirect_to new_user_session_path
+      end
+    end
+  end
+
+  describe "POST #up_vote" do
+    let(:question) { create(:question) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when is not author" do
+        context "when voting for question for the first time" do
+          it "returns :success status" do
+            post :up_vote, params: { id: question }, format: :json
+            expect(response).to have_http_status(:success)
+          end
+
+          it "creates new vote for question" do
+            expect do
+              post :up_vote, params: { id: question }, format: :json
+            end.to change(question.votes, :count).by 1
+          end
+
+          it "creates new vote for user" do
+            expect do
+              post :up_vote, params: { id: question }, format: :json
+            end.to change(user.votes, :count).by 1
+          end
+
+          it "increases question's vote rating" do
+            expect do
+              post :up_vote, params: { id: question }, format: :json
+            end.to change(question, :vote_rating).by 1
+          end
+        end
+
+        context "when voting for question that was already up-voted" do
+          let!(:vote) { create(:up_vote, votable: question, user: user) }
+
+          it "returns :unprocessable_entity status" do
+            post :up_vote, params: { id: question }, format: :json
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+
+          it "doesn't change quantity of votes in db" do
+            expect do
+              post :up_vote, params: { id: question }, format: :json
+            end.not_to change(Vote, :count)
+          end
+
+          it "doesn't increase question's vote rating" do
+            expect do
+              post :up_vote, params: { id: question }, format: :json
+            end.not_to change(question, :vote_rating)
+          end
+        end
+      end
+
+      context "when is author" do
+        let(:user_question) { create(:question, user: user) }
+
+        it "doesn't change quantity of votes in db" do
+          expect do
+            post :up_vote, params: { id: user_question }, format: :json
+          end.not_to change(Vote, :count)
+        end
+
+        it "returns :unprocessable_entity status when requesting json" do
+          post :up_vote, params: { id: user_question }, format: :json
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "redirects to fallback_location root_url when requesting html" do
+          post :up_vote, params: { id: user_question }
+          expect(response).to redirect_to root_url
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      it "doesn't change quantity of votes in db" do
+        expect do
+          post :up_vote, params: { id: question }, format: :json
+        end.not_to change(Vote, :count)
+      end
+
+      it "redirects to fallback_location root_url when requesting html" do
+        post :up_vote, params: { id: question }
+        expect(response).to redirect_to root_url
+      end
+
+      it "returns :unprocessable_entity status when requesting json" do
+        post :up_vote, params: { id: question }, format: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe "DELETE #delete_vote" do
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when deleting vote from up-voted question" do
+        let!(:question) { create(:question) }
+        let!(:vote)     { create(:up_vote, votable: question, user: user) }
+
+        it "returns :success status" do
+          delete :delete_vote, params: { id: question }, format: :json
+          expect(response).to have_http_status(:success)
+        end
+
+        it "deletes vote from question" do
+          expect do
+            delete :delete_vote, params: { id: question }, format: :json
+          end.to change(question.votes, :count).by -1
+        end
+
+        it "deletes vote from for user" do
+          expect do
+            delete :delete_vote, params: { id: question }, format: :json
+          end.to change(user.votes, :count).by -1
+        end
+
+        it "decreases question's vote rating" do
+          expect do
+            delete :delete_vote, params: { id: question }, format: :json
+          end.to change(question, :vote_rating).by -1
+        end
+      end
+
+      context "when trying to delete vote from question that has no user votes" do
+        let!(:question) { create(:question) }
+
+        it "returns :unprocessable_entity status" do
+          delete :delete_vote, params: { id: question }, format: :json
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "doesn't change quantity of votes in db" do
+          expect do
+            delete :delete_vote, params: { id: question }, format: :json
+          end.not_to change(Vote, :count)
+        end
+
+        it "doesn't decrease question's vote rating" do
+          expect do
+            delete :delete_vote, params: { id: question }, format: :json
+          end.not_to change(question, :vote_rating)
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      let!(:question) { create(:question) }
+
+      it "doesn't change quantity of votes in db" do
+        expect do
+          delete :delete_vote, params: { id: question }, format: :json
+        end.not_to change(Vote, :count)
+      end
+
+      it "redirects to sign in path" do
+        delete :delete_vote, params: { id: question }
         expect(response).to redirect_to new_user_session_path
       end
     end

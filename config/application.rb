@@ -39,5 +39,8 @@ module Qna
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # change schema format to support check constraints
+    config.active_record.schema_format = :sql
   end
 end

@@ -1,7 +1,9 @@
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!, except: [:show, :index]
-  before_action :set_question,  only: [:show, :edit, :update, :destroy]
-  before_action :correct_user?, only: [:edit, :update, :destroy]
+  before_action :authenticate_user!,  except: [:show, :index, :up_vote]
+  before_action :authenticate_voting, only:   [:up_vote]
+  before_action :set_question,  only: [:show, :edit, :update, :destroy, :up_vote, :delete_vote]
+  before_action :check_author,  only: [:edit, :update, :destroy]
+  before_action :check_votable, only: [:up_vote]
 
   def index
     @questions = Question.all
@@ -63,12 +65,76 @@ class QuestionsController < ApplicationController
     end
   end
 
+  def up_vote
+    @vote = current_user.up_vote(@question)
+    respond_to do |format|
+      if @vote
+        format.json { render json: up_vote_response }
+      else
+        message = "You have already voted for this question"
+        format.json { render json: message, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def delete_vote
+    @vote = current_user.delete_vote_from(@question)
+    respond_to do |format|
+      if @vote
+        format.json { render json: delete_vote_response }
+      else
+        message = "You haven't voted for this question"
+        format.json { render json: message, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
 
-  def correct_user?
+  def check_author
     return if current_user.author_of?(@question)
     flash[:notice] = "You need to be an author of the question"
     redirect_back(fallback_location: root_url)
+  end
+
+  def authenticate_voting
+    return if user_signed_in?
+    message = "You need to sign in before you can vote"
+    respond_to do |format|
+      format.json { render json: message, status: :unprocessable_entity }
+      format.html do
+        flash[:notice] = message
+        redirect_back(fallback_location: root_url)
+      end
+    end
+  end
+
+  def check_votable
+    return unless current_user.author_of?(@question)
+    message = "You can't vote up for your own question"
+    respond_to do |format|
+      format.json { render json: message, status: :unprocessable_entity }
+      format.html do
+        flash[:notice] = message
+        redirect_back(fallback_location: root_url)
+      end
+    end
+  end
+
+  def delete_vote_response
+    {
+      resource_id:  @question.id,
+      rating:       @question.vote_rating,
+      message:      "Your vote has been successfully deleted"
+    }
+  end
+
+  def up_vote_response
+    {
+      resource_id:  @question.id,
+      rating:       @question.vote_rating,
+      message:      "Your vote has been counted"
+    }
   end
 
   def set_question

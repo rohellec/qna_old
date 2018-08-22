@@ -3,22 +3,26 @@ require 'rails_helper'
 describe Vote do
   it { is_expected.to belong_to :user }
   it { is_expected.to belong_to :votable }
-  it { is_expected.to validate_inclusion_of(:value).in_array [-1, 1] }
 
-  describe "validation :unique_user" do
-    let(:user) { create(:user) }
-    let(:question) { create(:question) }
-    let!(:created_up_vote) { create(:vote, user: user, question: question) }
-    let(:up_vote) { build(:vote, user: user, question: question) }
+  # due to the bug in shoulda-matchers when testing uniqueness of fields with foreign-key contraint
+  # should use this hack
+  it do
+    subject.user = create(:user)
+    should validate_uniqueness_of(:user_id).scoped_to(:votable_type)
+  end
 
-    it "doesn't save vote to database if invalid" do
-      expect { up_vote.save }.not_to change(question.votes, :count)
+  describe ":up_votes scope" do
+    let!(:up_votes)  { create_pair(:question_up_vote) }
+    let!(:down_vote) { create(:question_down_vote) }
+
+    it "includes up-votes" do
+      up_votes.each do |vote|
+        expect(Vote.up_votes).to include vote
+      end
     end
 
-    it "adds error message to invalid vote" do
-      up_vote.save
-      expect(up_vote.errors.full_messages).to
-        include "Only one vote for question can be created by user"
+    it "doesn't includes down-votes" do
+      expect(Vote.up_votes).not_to include down_vote
     end
   end
 end
