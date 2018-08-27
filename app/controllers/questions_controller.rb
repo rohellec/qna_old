@@ -1,9 +1,10 @@
 class QuestionsController < ApplicationController
-  before_action :authenticate_user!,  except: [:show, :index, :up_vote]
-  before_action :authenticate_voting, only:   [:up_vote]
-  before_action :set_question,  only: [:show, :edit, :update, :destroy, :up_vote, :delete_vote]
+  before_action :authenticate_user!,  except: [:show, :index, :up_vote, :down_vote]
+  before_action :authenticate_voting, only:   [:up_vote, :down_vote]
+  before_action :set_question,  only: [:show, :edit, :update, :destroy,
+                                       :up_vote, :down_vote, :delete_vote]
   before_action :check_author,  only: [:edit, :update, :destroy]
-  before_action :check_votable, only: [:up_vote]
+  before_action :check_votable, only: [:up_vote, :down_vote]
 
   def index
     @questions = Question.all
@@ -69,9 +70,21 @@ class QuestionsController < ApplicationController
     @vote = current_user.up_vote(@question)
     respond_to do |format|
       if @vote
-        format.json { render json: up_vote_response }
+        format.json { render json: vote_response }
       else
         message = "You have already voted for this question"
+        format.json { render json: message, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def down_vote
+    @vote = current_user.down_vote(@question)
+    respond_to do |format|
+      if @vote
+        format.json { render json: vote_response }
+      else
+        message = "You have already voted against this question"
         format.json { render json: message, status: :unprocessable_entity }
       end
     end
@@ -111,7 +124,7 @@ class QuestionsController < ApplicationController
 
   def check_votable
     return unless current_user.author_of?(@question)
-    message = "You can't vote up for your own question"
+    message = "You can't vote for your own question"
     respond_to do |format|
       format.json { render json: message, status: :unprocessable_entity }
       format.html do
@@ -124,14 +137,16 @@ class QuestionsController < ApplicationController
   def delete_vote_response
     {
       resource_id:  @question.id,
+      type:         "question",
       rating:       @question.vote_rating,
       message:      "Your vote has been successfully deleted"
     }
   end
 
-  def up_vote_response
+  def vote_response
     {
       resource_id:  @question.id,
+      type:         "question",
       rating:       @question.vote_rating,
       message:      "Your vote has been counted"
     }

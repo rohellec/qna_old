@@ -336,11 +336,125 @@ describe QuestionsController do
     end
   end
 
+  describe "POST #down_vote" do
+    let(:question) { create(:question) }
+
+    context "when authenticated" do
+      before { sign_in user }
+
+      context "when is author" do
+        let(:user_question) { create(:question, user: user) }
+
+        it "doesn't change quantity of votes in db" do
+          expect do
+            post :down_vote, params: { id: user_question }, format: :json
+          end.not_to change(Vote, :count)
+        end
+
+        it "returns :unprocessable_entity status when requesting json" do
+          post :down_vote, params: { id: user_question }, format: :json
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "redirects to fallback_location root_url when requesting html" do
+          post :down_vote, params: { id: user_question }
+          expect(response).to redirect_to root_url
+        end
+      end
+
+      context "when is not author" do
+        context "when voting against the question for the first time" do
+          it "returns :success status" do
+            post :down_vote, params: { id: question }, format: :json
+            expect(response).to have_http_status(:success)
+          end
+
+          it "creates new vote for question" do
+            expect do
+              post :down_vote, params: { id: question }, format: :json
+            end.to change(question.votes, :count).by 1
+          end
+
+          it "creates new vote for user" do
+            expect do
+              post :down_vote, params: { id: question }, format: :json
+            end.to change(user.votes, :count).by 1
+          end
+
+          it "decreases question's vote rating" do
+            expect do
+              post :down_vote, params: { id: question }, format: :json
+            end.to change(question, :vote_rating).by(-1)
+          end
+        end
+
+        context "when voting against the question that was already down voted" do
+          let!(:vote) { create(:down_vote, votable: question, user: user) }
+
+          it "returns :unprocessable_entity status" do
+            post :down_vote, params: { id: question }, format: :json
+            expect(response).to have_http_status(:unprocessable_entity)
+          end
+
+          it "doesn't change quantity of votes in db" do
+            expect do
+              post :down_vote, params: { id: question }, format: :json
+            end.not_to change(Vote, :count)
+          end
+
+          it "doesn't increase question's vote rating" do
+            expect do
+              post :down_vote, params: { id: question }, format: :json
+            end.not_to change(question, :vote_rating)
+          end
+        end
+      end
+    end
+
+    context "when non-authenticated" do
+      it "doesn't change quantity of votes in db" do
+        expect do
+          post :down_vote, params: { id: question }, format: :json
+        end.not_to change(Vote, :count)
+      end
+
+      it "returns :unprocessable_entity status when requesting json" do
+        post :down_vote, params: { id: question }, format: :json
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it "redirects to fallback_location root_url when requesting html" do
+        post :down_vote, params: { id: question }
+        expect(response).to redirect_to root_url
+      end
+    end
+  end
+
   describe "POST #up_vote" do
     let(:question) { create(:question) }
 
     context "when authenticated" do
       before { sign_in user }
+
+      context "when is author" do
+        let(:user_question) { create(:question, user: user) }
+
+        it "doesn't change quantity of votes in db" do
+          expect do
+            post :up_vote, params: { id: user_question }, format: :json
+          end.not_to change(Vote, :count)
+        end
+
+        it "returns :unprocessable_entity status when requesting json" do
+          post :up_vote, params: { id: user_question }, format: :json
+          expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it "redirects to fallback_location root_url when requesting html" do
+          post :up_vote, params: { id: user_question }
+          expect(response).to redirect_to root_url
+        end
+      end
 
       context "when is not author" do
         context "when voting for question for the first time" do
@@ -389,26 +503,6 @@ describe QuestionsController do
           end
         end
       end
-
-      context "when is author" do
-        let(:user_question) { create(:question, user: user) }
-
-        it "doesn't change quantity of votes in db" do
-          expect do
-            post :up_vote, params: { id: user_question }, format: :json
-          end.not_to change(Vote, :count)
-        end
-
-        it "returns :unprocessable_entity status when requesting json" do
-          post :up_vote, params: { id: user_question }, format: :json
-          expect(response).to have_http_status(:unprocessable_entity)
-        end
-
-        it "redirects to fallback_location root_url when requesting html" do
-          post :up_vote, params: { id: user_question }
-          expect(response).to redirect_to root_url
-        end
-      end
     end
 
     context "when non-authenticated" do
@@ -434,9 +528,10 @@ describe QuestionsController do
     context "when authenticated" do
       before { sign_in user }
 
-      context "when deleting vote from up-voted question" do
-        let!(:question) { create(:question) }
-        let!(:vote)     { create(:up_vote, votable: question, user: user) }
+      context "when deleting vote from question with user's votes" do
+        let(:question) { create(:question) }
+
+        before { create(:up_vote, votable: question, user: user) }
 
         it "returns :success status" do
           delete :delete_vote, params: { id: question }, format: :json
@@ -446,24 +541,39 @@ describe QuestionsController do
         it "deletes vote from question" do
           expect do
             delete :delete_vote, params: { id: question }, format: :json
-          end.to change(question.votes, :count).by -1
+          end.to change(question.votes, :count).by(-1)
         end
 
         it "deletes vote from for user" do
           expect do
             delete :delete_vote, params: { id: question }, format: :json
-          end.to change(user.votes, :count).by -1
+          end.to change(user.votes, :count).by(-1)
         end
 
-        it "decreases question's vote rating" do
-          expect do
-            delete :delete_vote, params: { id: question }, format: :json
-          end.to change(question, :vote_rating).by -1
+        context "when it was up voted" do
+          it "decreases question's vote rating" do
+            expect do
+              delete :delete_vote, params: { id: question }, format: :json
+            end.to change(question, :vote_rating).by(-1)
+          end
+        end
+
+        context "when it was down voted" do
+          before do
+            user.delete_vote_from(question)
+            create(:down_vote, votable: question, user: user)
+          end
+
+          it "increases question's vote rating" do
+            expect do
+              delete :delete_vote, params: { id: question }, format: :json
+            end.to change(question, :vote_rating).by(1)
+          end
         end
       end
 
       context "when trying to delete vote from question that has no user votes" do
-        let!(:question) { create(:question) }
+        let(:question) { create(:question) }
 
         it "returns :unprocessable_entity status" do
           delete :delete_vote, params: { id: question }, format: :json
@@ -476,7 +586,7 @@ describe QuestionsController do
           end.not_to change(Vote, :count)
         end
 
-        it "doesn't decrease question's vote rating" do
+        it "doesn't change question's vote rating" do
           expect do
             delete :delete_vote, params: { id: question }, format: :json
           end.not_to change(question, :vote_rating)
