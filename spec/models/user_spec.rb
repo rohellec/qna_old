@@ -5,7 +5,6 @@ describe User do
   let(:question) { create(:question) }
   let(:user_question)  { create(:question, user: user) }
 
-
   it { is_expected.to have_many(:questions).dependent(:destroy) }
   it { is_expected.to have_many(:answers).dependent(:destroy) }
   it { is_expected.to have_many(:votes).dependent(:nullify) }
@@ -23,60 +22,102 @@ describe User do
     end
   end
 
-  describe "#up_vote" do
+  describe "#down_vote" do
     context "when author of question" do
-      let(:up_vote_question) { user.up_vote user_question }
+      subject { user.down_vote user_question }
 
-      it "returns nil" do
-        expect(up_vote_question).to be_nil
+      it { is_expected.to be_nil }
+
+      it "doesn't decrease question's vote rating" do
+        expect { user.down_vote user_question }.not_to change(question, :vote_rating)
       end
     end
 
     context "when is not author of question" do
-      let(:up_vote_question) { user.up_vote question }
+      subject(:down_vote) { user.down_vote question }
 
-      it "returns newly created vote" do
-        expect(up_vote_question).to be_a Vote
+      it { is_expected.to be_a Vote }
+
+      it "returns vote with value equal to 'down'" do
+        expect(down_vote.value).to eq Vote::DOWN
       end
 
       it "creates new vote for question" do
-        expect { user.up_vote question }.to change(question.votes, :count).by 1
+        expect { user.down_vote question }.to change(question.votes, :count).by(1)
       end
 
-      it "creates vote with value eq to 'up'" do
-        expect(up_vote_question.value).to eq "up"
+      it "decreases question's vote rating" do
+        expect { user.down_vote question }.to change(question, :vote_rating).by(-1)
       end
 
-      it "doesn't up-vote already upvoted resource" do
-        user.up_vote question
-        expect { user.up_vote question }.not_to change(question.votes, :count)
+      context "when called twice in a row" do
+        before { user.down_vote question }
+
+        it "doesn't change vote rating after the first time" do
+          expect { user.down_vote question }.not_to change(question.votes, :count)
+        end
+      end
+    end
+  end
+
+  describe "#up_vote" do
+    context "when author of question" do
+      subject { user.up_vote user_question }
+
+      it { is_expected.to be_nil }
+
+      it "doesn't increase question's vote rating" do
+        expect { user.up_vote user_question }.not_to change(question, :vote_rating)
+      end
+    end
+
+    context "when is not author of question" do
+      subject(:up_vote) { user.up_vote question }
+
+      it { is_expected.to be_a Vote }
+
+      it "returns vote with value equal to 'up'" do
+        expect(up_vote.value).to eq Vote::UP
+      end
+
+      it "creates new vote for question" do
+        expect { user.up_vote question }.to change(question.votes, :count).by(1)
+      end
+
+      it "increases question's vote rating" do
+        expect { user.up_vote question }.to change(question, :vote_rating).by(1)
+      end
+
+      context "when called twice in a row" do
+        before { user.up_vote question }
+
+        it "doesn't change vote rating after the first time" do
+          expect { user.up_vote question }.not_to change(question.votes, :count)
+        end
       end
     end
   end
 
   describe "#delete_vote_from" do
     context "when there is a user's vote in db" do
+      subject { user.delete_vote_from question }
+
       let!(:vote) { create(:up_vote, votable: question, user: user) }
 
-      it "deletes vote" do
-        expect { user.delete_vote_from question }.to change(question.votes, :count).by -1
-      end
+      it { is_expected.to eq vote }
 
-      it "returns deleted vote" do
-        deleted_vote = user.delete_vote_from question
-        expect(deleted_vote).to eq vote
+      it "deletes vote" do
+        expect { user.delete_vote_from question }.to change(question.votes, :count).by(-1)
       end
     end
 
     context "when there is no user's vote in db" do
-      let(:delete_vote_from_question) { user.delete_vote_from question }
+      subject { user.delete_vote_from question }
 
-      it "doen't change number of votes for question" do
+      it { is_expected.to be_nil }
+
+      it "doesn't change number of question's votes" do
         expect { user.delete_vote_from question }.not_to change(question.votes, :count)
-      end
-
-      it "returns nil" do
-        expect(delete_vote_from_question).to be_nil
       end
     end
   end

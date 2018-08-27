@@ -6,7 +6,6 @@ describe Question do
   let(:user_question) { create(:question, user: user) }
   let(:answer) { create(:answer, question: question) }
 
-
   it { is_expected.to belong_to(:user) }
   it { is_expected.to have_many(:answers).dependent(:destroy) }
   it { is_expected.to have_many(:attachments).dependent(:destroy) }
@@ -57,29 +56,49 @@ describe Question do
     end
   end
 
-  describe "#up_voted_by?" do
-    it "returns true if there is an up-vote by user" do
-      create(:question_up_vote, votable: question, user: user)
-      expect(question.up_voted_by?(user)).to be_truthy
+  describe "#down_voted_by?" do
+    it "returns true if there is a down vote by user" do
+      create(:down_vote, votable: question, user: user)
+      expect(question).to be_down_voted_by(user)
     end
 
-    it "returns false if there is no up-vote by user" do
-      expect(question.up_voted_by?(user)).to be_falsey
+    it "returns false if there is no down vote by user" do
+      expect(question).not_to be_down_voted_by(user)
+    end
+  end
+
+  describe "#up_voted_by?" do
+    it "returns true if there is an up vote by user" do
+      create(:up_vote, votable: question, user: user)
+      expect(question).to be_up_voted_by(user)
+    end
+
+    it "returns false if there is no up vote by user" do
+      expect(question).not_to be_up_voted_by(user)
     end
   end
 
   describe "#vote_rating" do
-    it "is increased after voting for question" do
-      expect { user.up_vote question }.to change(question, :vote_rating).by 1
+    context "when there is no votes for this question" do
+      it "returns 0" do
+        expect(question.vote_rating).to be_zero
+      end
     end
 
-    it "is not increased when user votes for it's own question" do
-      expect { user.up_vote user_question }.not_to change(question, :vote_rating)
+    context "when there are only down votes" do
+      before { create_pair(:down_vote, votable: question) }
+
+      it "returns negative number" do
+        expect(question.vote_rating).to be_negative
+      end
     end
 
-    it "is not increased when user votes for question twice in a row" do
-      user.up_vote question
-      expect { user.up_vote question }.not_to change(question, :vote_rating)
+    context "when there are only up votes" do
+      before { create_pair(:up_vote, votable: question) }
+
+      it "returns negative number" do
+        expect(question.vote_rating).to be_positive
+      end
     end
   end
 end

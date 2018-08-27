@@ -11,7 +11,7 @@ class Question < ApplicationRecord
   validates :title, :body, presence: true
 
   def accepted_answer
-    answers.accepted.find_by(question_id: id)
+    answers.accepted.find_by(question: self)
   end
 
   def answered?
@@ -19,8 +19,13 @@ class Question < ApplicationRecord
   end
 
   def up_voted_by?(user)
-    vote = votes.up_votes.find_by(user: user)
-    !vote.nil?
+    vote = votes.find_by(user: user)
+    vote&.value == Vote::UP
+  end
+
+  def down_voted_by?(user)
+    vote = votes.find_by(user: user)
+    vote&.value == Vote::DOWN
   end
 
   def vote_rating

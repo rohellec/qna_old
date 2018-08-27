@@ -1,12 +1,6 @@
 class Vote < ApplicationRecord
-  scope :up_votes, -> { where(value: VALUES[:up]) }
-
-  VALUES = {
-    up:   "up",
-    down: "down"
-  }.freeze
-
-  enum value: { up: 1, down: -1 }
+  UP   =  1
+  DOWN = -1
 
   belongs_to :user
   belongs_to :votable, polymorphic: true

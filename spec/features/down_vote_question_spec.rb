@@ -1,9 +1,9 @@
 require "feature_helper"
 
-feature "Voting up the question", %(
-  In order to show that question is useful
+feature "Voting down the question", %(
+  In order to show that question is noxious
   As authenticated user
-  I want to be able to up vote this question
+  I want to be able to down vote this question
 ), js: true do
 
   given(:user) { create(:confirmed_user) }
@@ -16,10 +16,10 @@ feature "Voting up the question", %(
 
       background do
         visit question_path(question)
-        click_on "up vote"
+        click_on "down vote"
       end
 
-      scenario "clicking 'up vote' link doesn't increase vote rating" do
+      scenario "clicking 'down vote' link doesn't decrease vote rating" do
         expect(page).to have_content "You can't vote for your own question"
         within ".question-vote .vote-rating" do
           expect(page).to have_content 0
@@ -32,19 +32,19 @@ feature "Voting up the question", %(
 
       background do
         visit question_path(question)
-        click_on "up vote"
+        click_on "down vote"
       end
 
-      scenario "voting up increases question's vote rating" do
+      scenario "voting down decreases question's vote rating" do
         expect(page).to have_content "Your vote has been counted"
         within ".question-vote .vote-rating" do
-          expect(page).to have_content 1
+          expect(page).to have_content(-1)
         end
       end
 
-      scenario "'delete vote' link is shown instead of 'up vote'" do
+      scenario "'delete vote' link is shown instead of 'down vote'" do
         within ".question-vote" do
-          expect(page).to have_no_content "up vote"
+          expect(page).to have_no_content "down vote"
           expect(page).to have_content "delete vote"
         end
       end
@@ -56,10 +56,10 @@ feature "Voting up the question", %(
 
     background do
       visit question_path(question)
-      click_on "up vote"
+      click_on "down vote"
     end
 
-    scenario "clicking 'up vote' link doesn't increase vote rating" do
+    scenario "clicking 'down vote' link doesn't decrease vote rating" do
       expect(page).to have_content "You need to sign in before you can vote"
       within ".question-vote .vote-rating" do
         expect(page).to have_content 0
