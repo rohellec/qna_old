@@ -1,0 +1,9 @@
+en:
+  controllers:
+    voted:
+      create_vote: "Your vote has been counted"
+      delete_vote: "Your vote has been successfully deleted"
+      already_voted_error: "You have already voted on this %{votable_type}"
+      not_authenticated_error: "You need to sign in before you can vote"
+      not_removable_error: "You haven't voted on this %{votable_type}"
+      votable_author_error: "You can't vote on your own %{votable_type}"
