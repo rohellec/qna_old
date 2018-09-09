@@ -20,8 +20,8 @@ feature "Voting down the question", %(
       end
 
       scenario "clicking 'down vote' link doesn't decrease vote rating" do
-        expect(page).to have_content "You can't vote for your own question"
-        within ".question-vote .vote-rating" do
+        expect(page).to have_content "You can't vote on your own question"
+        within ".question_#{question.id}_vote .vote-rating" do
           expect(page).to have_content 0
         end
       end
@@ -37,13 +37,13 @@ feature "Voting down the question", %(
 
       scenario "voting down decreases question's vote rating" do
         expect(page).to have_content "Your vote has been counted"
-        within ".question-vote .vote-rating" do
+        within ".question_#{question.id}_vote .vote-rating" do
           expect(page).to have_content(-1)
         end
       end
 
       scenario "'delete vote' link is shown instead of 'down vote'" do
-        within ".question-vote" do
+        within ".question_#{question.id}_vote" do
           expect(page).to have_no_content "down vote"
           expect(page).to have_content "delete vote"
         end
@@ -61,7 +61,7 @@ feature "Voting down the question", %(
 
     scenario "clicking 'down vote' link doesn't decrease vote rating" do
       expect(page).to have_content "You need to sign in before you can vote"
-      within ".question-vote .vote-rating" do
+      within ".question_#{question.id}_vote .vote-rating" do
         expect(page).to have_content 0
       end
     end

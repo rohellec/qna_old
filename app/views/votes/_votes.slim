@@ -1,0 +1,20 @@
+div class="#{votable_type}_#{votable.id}_vote"
+    - if votable.up_voted_by?(current_user)
+      = link_to "delete vote", url_for(only_path: true, action: :delete_vote),
+                class: "vote up-voted",
+                method: :delete, remote: true
+    - else
+      = link_to "up vote", url_for(only_path: true, action: :up_vote),
+                class: "vote up-vote",
+                method: :post, remote: true
+
+    span.vote-rating = votable.vote_rating
+
+    - if votable.down_voted_by?(current_user)
+      = link_to "delete vote", url_for(only_path: true, action: :delete_vote),
+                class: "vote down-voted",
+                method: :delete, remote: true
+    - else
+      = link_to "down vote", url_for(only_path: true, action: :down_vote),
+                class: "vote down-vote",
+                method: :post, remote: true
