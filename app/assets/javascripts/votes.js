@@ -17,10 +17,10 @@ function addVoteActionAjaxEvents(selector) {
     $('.vote-rating').html(data.rating);
 
     var current = $(this);
-    replaceVoteLink(data.resource_id, data.type, current);
+    replaceVoteLink(data.votable_id, data.resource, current);
   });
 
-  $('.question').on('ajax:error', function(event) {
+  $(selector).on('ajax:error', '.vote', function(event) {
     var detail = event.detail;
     var data = detail[0], status = detail[1], xhr = detail[2];
 
@@ -33,24 +33,23 @@ function addVoteActionAjaxEvents(selector) {
   });
 }
 
-function replaceVoteLink(id, type, elem) {
+function replaceVoteLink(id, resource, elem) {
   var link;
   if (elem.hasClass('up-vote') || elem.hasClass('down-vote')) {
-    link = createDeleteVoteLink(id, type, elem);
-  } else if (elem.hasClass('down-voted')) {
-    link = createDownVoteLink(id, type);
-  } else if (elem.hasClass('up-voted')) {
-    link = createUpVoteLink(id, type);
+    link = createDeleteVoteLink(id, resource, elem);
+  } else {
+    link = createVoteLink(id, resource, elem);
   }
   elem.replaceWith(link);
 }
 
-function createDeleteVoteLink(id, type, elem) {
-  var href = type + '/' + id + '/delete_vote';
-  var css_class = elem.hasClass('up-vote') ? 'up-voted' : 'down-voted';
+function createDeleteVoteLink(id, resource, elem) {
+  var href  = '/' + resource + '/' + id + '/delete_vote';
+  var voted = elem.hasClass('up-vote') ? 'up-voted' : 'down-voted';
+  var css_class = 'vote ' + voted;
   var link = $('<a>', {
     'href':  href,
-    'class': css_class,
+    'class': 'vote ' + css_class,
     'text':  'delete vote',
     'data-method': 'delete',
     'data-remote': true,
@@ -58,23 +57,13 @@ function createDeleteVoteLink(id, type, elem) {
   return link;
 }
 
-function createDownVoteLink(id, type) {
-  var href = type + '/' + id + '/down_vote';
+function createVoteLink(id, resource, elem) {
+  var vote = elem.hasClass('up-voted') ? 'up' : 'down';
+  var css_class = 'vote ' + vote + '-vote';
+  var href = '/' + resource + '/' + id + '/' + vote + '_vote';
   var link = $('<a>', {
-    'class': 'down-vote',
-    'text':  'down vote',
-    'href':  href,
-    'data-method': 'post',
-    'data-remote': true,
-  });
-  return link;
-}
-
-function createUpVoteLink(id, type) {
-  var href = type + '/' + id + '/up_vote';
-  var link = $('<a>', {
-    'class': 'up-vote',
-    'text':  'up vote',
+    'class': css_class,
+    'text':  vote + ' vote',
     'href':  href,
     'data-method': 'post',
     'data-remote': true,
