@@ -2,84 +2,67 @@ module Voted
   extend ActiveSupport::Concern
 
   included do
-    before_action :authenticate_voting, only: [:up_vote, :down_vote]
-    before_action :set_votable, only: [:up_vote, :down_vote, :delete_vote]
-    before_action :check_votable, only: [:up_vote, :down_vote]
+    before_action :authenticate_voting,  only: [:up_vote, :down_vote]
+    before_action :set_votable,          only: [:up_vote, :down_vote, :delete_vote]
+    before_action :check_votable_author, only: [:up_vote, :down_vote]
+    before_action :check_author_vote,    only: [:up_vote, :down_vote]
   end
 
   def up_vote
-    @vote = current_user.up_vote(@votable)
-    success = "Your vote has been counted"
-    fail    = "You have already up voted this #{resource_type}"
-    respond_vote_with_json(success: success, fail: fail)
+    current_user.up_vote(@votable)
+    respond_voting_with_json(message: :create_vote)
   end
 
   def down_vote
-    @vote = current_user.down_vote(@votable)
-    success = "Your vote has been counted"
-    fail    = "You have already down voted this #{resource_type}"
-    respond_vote_with_json(success: success, fail: fail)
+    current_user.down_vote(@votable)
+    respond_voting_with_json(message: :create_vote)
   end
 
   def delete_vote
-    @vote = current_user.delete_vote_from(@votable)
-    success = "Your vote has been successfully deleted"
-    fail    = "You haven't voted for this #{resource_type}"
-    respond_vote_with_json(success: success, fail: fail)
+    vote = current_user.delete_vote(@votable)
+    if vote.present?
+      respond_voting_with_json(message: :delete_vote)
+    else
+      respond_unprocessable_with_message t("controllers.voted.not_removable")
+    end
   end
 
   private
 
   def authenticate_voting
     return if user_signed_in?
-    message = "You need to sign in before you can vote"
-    respond_unprocessable_entity message
+    message = voted_response_message(:not_authenticated_error)
+    respond_unprocessable_with_message(message)
   end
 
-  def check_votable
+  def check_votable_author
     return unless current_user.author_of?(@votable)
-    message = "You can't vote for your own #{resource_type}"
-    respond_unprocessable_entity message
+    message = voted_response_message(:votable_author_error)
+    respond_unprocessable_with_message(message)
   end
 
-  def model_klass
-    controller_name.classify.constantize
-  end
-
-  def resource_type
-    controller_name.singularize
-  end
-
-  def respond_vote_with_json(messages)
-    respond_to do |format|
-      if @vote
-        format.json { render json: vote_response(messages[:success]) }
-      else
-        format.json { render json: messages[:fail], status: :unprocessable_entity }
-      end
-    end
-  end
-
-  def respond_unprocessable_entity(message)
-    respond_to do |format|
-      format.json { render json: message, status: :unprocessable_entity }
-      format.html do
-        flash[:notice] = message
-        redirect_back(fallback_location: root_url)
-      end
-    end
-  end
-
-  def vote_response(message)
-    {
-      resource_id:  @votable.id,
-      type:         resource_type,
-      rating:       @votable.vote_rating,
-      message:      message
-    }
+  def check_author_vote
+    return unless @votable.voted_by?(current_user)
+    message = voted_response_message(:already_voted_error)
+    respond_unprocessable_with_message(message)
   end
 
   def set_votable
     @votable = model_klass.find(params[:id])
+  end
+
+  def voted_response_message(message_key)
+    lookup_key = "controllers.voted.#{message_key}"
+    t(lookup_key, votable_type: resource_type)
+  end
+
+  def respond_voting_with_json(options)
+    message = voted_response_message(options[:message])
+    render json: {
+      votable_id: @votable.id,
+      resource:   controller_name,
+      rating:     @votable.vote_rating,
+      message:    message
+    }
   end
 end
