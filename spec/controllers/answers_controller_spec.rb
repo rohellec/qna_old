@@ -1,10 +1,13 @@
 require 'rails_helper'
+require "controllers/concerns/voted_spec"
 
 describe AnswersController do
   let(:user)     { create(:confirmed_user) }
   let(:question) { create(:question) }
 
   before { request.env['devise.mapping'] = Devise.mappings[:user] }
+
+  it_behaves_like "voted"
 
   describe "POST #create" do
     let(:valid_attributes)   { attributes_for(:answer, user: user) }

@@ -1,35 +1,39 @@
 $(document).on('turbolinks:load', function() {
-  addVoteActionAjaxEvents('.question');
+  addVoteActionAjaxEvents(['.question', '.answers']);
 });
 
-function addVoteActionAjaxEvents(selector) {
-  $(selector).on('ajax:success', '.vote', function(event) {
-    var detail = event.detail;
-    var data = detail[0], status = detail[1], xhr = detail[2];
+function addVoteActionAjaxEvents(selectors) {
+  selectors.forEach(function(selector) {
+    $(selector).on('ajax:success', '.vote', function(event) {
+      var detail = event.detail;
+      var data = detail[0], status = detail[1], xhr = detail[2];
 
-    // Updating flash
-    var message = $('<div>', {
-      'class': 'alert success',
-      'text':  data.message
+      // Updating flash
+      var message = $('<div>', {
+        'class': 'alert success',
+        'text':  data.message
+      });
+      $('.flash').html(message);
+
+      var resource   = pluralize.singular(data.resource);
+      var voteRating = $('#' + resource + '-' + data.votable_id).find('.vote-rating');
+      voteRating.html(data.rating);
+
+      var current = $(this);
+      replaceVoteLink(data.votable_id, data.resource, current);
     });
-    $('.flash').html(message);
 
-    $('.vote-rating').html(data.rating);
+    $(selector).on('ajax:error', '.vote', function(event) {
+      var detail = event.detail;
+      var data = detail[0], status = detail[1], xhr = detail[2];
 
-    var current = $(this);
-    replaceVoteLink(data.votable_id, data.resource, current);
-  });
-
-  $(selector).on('ajax:error', '.vote', function(event) {
-    var detail = event.detail;
-    var data = detail[0], status = detail[1], xhr = detail[2];
-
-    // Updating flash
-    var message = $('<div>', {
-      'class': 'alert danger',
-      'text':  xhr.responseText
+      // Updating flash
+      var message = $('<div>', {
+        'class': 'alert danger',
+        'text':  xhr.responseText
+      });
+      $('.flash').html(message);
     });
-    $('.flash').html(message);
   });
 }
 

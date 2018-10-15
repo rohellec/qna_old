@@ -1,5 +1,8 @@
 - if answer.persisted?
   tr id="answer-#{answer.id}" class=("accepted" if answer.accepted?)
+
+    td == render "votes/votes", votable: answer, votable_type: "answer"
+
     - if current_user&.author_of?(answer.question)
       td
         = link_to "Remove accept", remove_accept_answer_path(answer),

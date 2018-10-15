@@ -14,6 +14,7 @@
 //= require rails-ujs
 //= require turbolinks
 //= require cocoon
+//= require pluralize
 //= require_tree .
 //= require_self
 

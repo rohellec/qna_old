@@ -1,4 +1,4 @@
-div class="question #{ 'answered' if @question.answered? }"
+div id="question-#{@question.id}" class="question #{'answered' if @question.answered? }"
   h1.question-title
     = @question.title
 
