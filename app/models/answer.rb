@@ -1,4 +1,6 @@
 class Answer < ApplicationRecord
+  include Votable
+
   scope :accepted, -> { where(accepted: true) }
 
   belongs_to :question

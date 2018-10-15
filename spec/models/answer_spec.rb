@@ -1,8 +1,11 @@
-require 'rails_helper'
+require "rails_helper"
+require "models/concerns/votable_spec"
 
 describe Answer do
   let(:user) { create(:user) }
   let(:question) { create(:question, user: user) }
+
+  it_behaves_like "votable"
 
   it { is_expected.to belong_to :user }
   it { is_expected.to belong_to :question }
@@ -14,12 +17,12 @@ describe Answer do
 
     it "includes accepted answers" do
       accepted_answers.each do |answer|
-        expect(Answer.accepted).to include answer
+        expect(described_class.accepted).to include answer
       end
     end
 
     it "doesn't include non-accepted answers" do
-      expect(Answer.accepted).not_to include answer
+      expect(described_class.accepted).not_to include answer
     end
   end
 
@@ -52,7 +55,7 @@ describe Answer do
     end
 
     it "adds answer to accepted scope" do
-      expect(Answer.accepted).to include(answer)
+      expect(described_class.accepted).to include(answer)
     end
 
     context "when accepting another answer" do
@@ -80,7 +83,7 @@ describe Answer do
     before { accepted_answer.remove_accept }
 
     it "sets #accepted? for answer to false" do
-      expect(accepted_answer.accepted?).to be_falsey
+      expect(accepted_answer).not_to be_accepted
     end
 
     it "applies default scope ordering for answers" do
