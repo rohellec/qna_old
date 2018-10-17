@@ -3,7 +3,7 @@ class CreateVotes < ActiveRecord::Migration[5.1]
     create_table :votes do |t|
       t.integer :value
       t.references :votable, polymorphic: true
-      t.references :user, foreign_key: true, index: { unique: true }
+      t.references :user, foreign_key: true
     end
 
     execute <<-SQL

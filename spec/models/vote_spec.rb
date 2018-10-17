@@ -4,21 +4,34 @@ describe Vote do
   it { is_expected.to belong_to :user }
   it { is_expected.to belong_to :votable }
 
-  # due to the bug in shoulda-matchers when testing uniqueness of fields with foreign-key contraint
-  # should use this hack
-  it do
-    subject.user = create(:user)
-    subject.votable = create(:question)
-    is_expected.to validate_uniqueness_of(:user_id).scoped_to(:votable_type)
+  # it seems that shoulda-matchers doesn't work for validating
+  # uniquenes within the scope of polymorphic foreign_key
+  describe "validation of user_id uniqueness for votable" do
+    subject(:vote) { build(:down_vote, user: user, votable: votable) }
+
+    let(:user)    { create(:user) }
+    let(:votable) { create(:question) }
+
+    before { create(:up_vote, user: user, votable: votable) }
+
+    it "doesn't save vote in db if user_id isn't unique" do
+      expect { vote.save }.not_to change(described_class, :count)
+    end
+
+    it "adds error message to invalid vote" do
+      vote.save
+      expect(vote.errors[:user_id]).to include I18n.t("errors.messages.taken")
+    end
   end
 
   describe "validation :user_vote_ability" do
-    let!(:user)    { create(:user) }
-    let!(:votable) { create(:question, user: user) }
-    let!(:vote)    { build(:up_vote, votable: votable, user: user) }
+    subject(:vote) { build(:up_vote, votable: votable, user: user) }
+
+    let(:user)    { create(:user) }
+    let(:votable) { create(:question, user: user) }
 
     it "doesn't save vote in db if it's invalid" do
-      expect { vote.save }.not_to change(votable.votes, :count)
+      expect { vote.save }.not_to change(described_class, :count)
     end
 
     it "adds error message to invalid vote" do
