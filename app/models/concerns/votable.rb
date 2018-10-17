@@ -16,8 +16,7 @@ module Votable
   end
 
   def voted_by?(user)
-    vote = votes.find_by(user: user)
-    vote.present?
+    votes.exists?(user: user)
   end
 
   def vote_rating
