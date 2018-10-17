@@ -361,7 +361,7 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON public.users USING bt
 -- Name: index_votes_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_votes_on_user_id ON public.votes USING btree (user_id);
+CREATE INDEX index_votes_on_user_id ON public.votes USING btree (user_id);
 
 
 --
