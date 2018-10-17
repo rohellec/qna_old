@@ -1,24 +1,20 @@
 div class="#{votable_type}-vote"
     - if votable.up_voted_by?(current_user)
-      = link_to "delete vote", url_for(controller: votable_type.pluralize,
-                                       id: votable.id, action: :delete_vote),
+      = link_to "delete vote", polymorphic_path(votable, action: :delete_vote),
                 class:  "vote up-voted",
                 method: :delete, remote: true
     - else
-      = link_to "up vote", url_for(controller: votable_type.pluralize,
-                                   id: votable.id, action: :up_vote),
+      = link_to "up vote", polymorphic_path(votable, action: :up_vote),
                 class:  "vote up-vote",
                 method: :post, remote: true
 
     span.vote-rating = votable.vote_rating
 
     - if votable.down_voted_by?(current_user)
-      = link_to "delete vote", url_for(controller: votable_type.pluralize,
-                                       id: votable.id, action: :delete_vote),
+      = link_to "delete vote", polymorphic_path(votable, action: :delete_vote),
                 class:  "vote down-voted",
                 method: :delete, remote: true
     - else
-      = link_to "down vote", url_for(controller: votable_type.pluralize,
-                                     id: votable.id, action: :down_vote),
+      = link_to "down vote", polymorphic_path(votable, action: :down_vote),
                 class:  "vote down-vote",
                 method: :post, remote: true
