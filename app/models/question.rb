@@ -12,7 +12,7 @@ class Question < ApplicationRecord
   validates :title, :body, presence: true
 
   def accepted_answer
-    answers.accepted.find_by(question: self)
+    answers.accepted.take
   end
 
   def answered?
