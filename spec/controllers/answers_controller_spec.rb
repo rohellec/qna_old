@@ -181,7 +181,7 @@ describe AnswersController do
           .to change(Answer, :count).by(-1)
         end
 
-        it "redirects to question_path" do
+        it "renders 'destroy.js' template" do
           delete :destroy, params: { id: user_answer }, format: :js
           expect(response).to render_template :destroy
         end
