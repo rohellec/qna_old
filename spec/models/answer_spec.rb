@@ -11,6 +11,8 @@ describe Answer do
   it { is_expected.to belong_to :question }
   it { is_expected.to validate_presence_of :body }
 
+  it { is_expected.to have_many(:comments).dependent(:destroy) }
+
   describe ":accepted scope" do
     let!(:accepted_answers) { create_pair(:accepted_answer) }
     let!(:answer) { create(:answer) }

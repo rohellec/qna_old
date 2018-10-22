@@ -8,10 +8,12 @@ describe Question do
   let(:answer) { create(:answer, question: question) }
 
   it_behaves_like "votable"
+  it_behaves_like "commentable"
 
   it { is_expected.to belong_to(:user) }
   it { is_expected.to have_many(:answers).dependent(:destroy) }
   it { is_expected.to have_many(:attachments).dependent(:destroy) }
+  it { is_expected.to have_many(:comments).dependent(:destroy) }
 
   it { is_expected.to accept_nested_attributes_for(:attachments) }
 
