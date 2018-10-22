@@ -92,6 +92,38 @@ ALTER SEQUENCE public.attachments_id_seq OWNED BY public.attachments.id;
 
 
 --
+-- Name: comments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.comments (
+    id bigint NOT NULL,
+    body text,
+    commentable_type character varying,
+    commentable_id bigint,
+    user_id bigint
+);
+
+
+--
+-- Name: comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.comments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.comments_id_seq OWNED BY public.comments.id;
+
+
+--
 -- Name: questions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -225,6 +257,13 @@ ALTER TABLE ONLY public.attachments ALTER COLUMN id SET DEFAULT nextval('public.
 
 
 --
+-- Name: comments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comments ALTER COLUMN id SET DEFAULT nextval('public.comments_id_seq'::regclass);
+
+
+--
 -- Name: questions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -267,6 +306,14 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 ALTER TABLE ONLY public.attachments
     ADD CONSTRAINT attachments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: comments comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comments
+    ADD CONSTRAINT comments_pkey PRIMARY KEY (id);
 
 
 --
@@ -323,6 +370,20 @@ CREATE INDEX index_attachments_on_attachable_type_and_attachable_id ON public.at
 
 
 --
+-- Name: index_comments_on_commentable_type_and_commentable_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_comments_on_commentable_type_and_commentable_id ON public.comments USING btree (commentable_type, commentable_id);
+
+
+--
+-- Name: index_comments_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_comments_on_user_id ON public.comments USING btree (user_id);
+
+
+--
 -- Name: index_questions_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -355,6 +416,14 @@ CREATE INDEX index_votes_on_user_id ON public.votes USING btree (user_id);
 --
 
 CREATE INDEX index_votes_on_votable_type_and_votable_id ON public.votes USING btree (votable_type, votable_id);
+
+
+--
+-- Name: comments fk_rails_03de2dc08c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.comments
+    ADD CONSTRAINT fk_rails_03de2dc08c FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -403,6 +472,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180511161922'),
 ('20180625193235'),
 ('20180720152108'),
-('20180808222141');
+('20180808222141'),
+('20181022192604');
 
 
