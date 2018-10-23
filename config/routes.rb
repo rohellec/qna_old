@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
 
+  concern :commentable do
+    resources :comments, shallow: true, only: [:create, :update, :destroy]
+  end
+
   concern :votable do
     member do
       post   "up_vote"
@@ -9,8 +13,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :questions, concerns: :votable do
-    resources :answers, concerns: :votable,
+  resources :questions, concerns: [:commentable, :votable] do
+    resources :answers, concerns: [:commentable, :votable],
                         shallow: true, only: [:create, :update, :destroy] do
       member do
         post "accept"
