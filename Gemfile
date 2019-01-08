@@ -6,9 +6,9 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.5'
+gem 'rails', '~> 5.2.2'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 1.0'
+gem 'pg', '~> 1.1.3'
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 # Use SCSS for stylesheets
@@ -18,7 +18,7 @@ gem 'uglifier', '~> 4.1.6'
 # Use jQuery as JavaScript library
 gem 'jquery-rails', '~> 4.3.1'
 # Use Slim as template engine
-gem 'slim-rails', '~> 3.1.3'
+gem 'slim-rails', '~> 3.2'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -29,25 +29,25 @@ gem 'jbuilder', '~> 2.7'
 # gem 'redis', '~> 4.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-gem 'carrierwave', '~> 1.2.2'
+gem 'carrierwave', '~> 1.3.1'
 gem 'cocoon', '~> 1.2.11'
-gem 'devise', '~> 4.4.3'
+gem 'devise', '~> 4.5.0'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
-  gem 'rspec-rails', '~> 3.7.2'
-  gem 'factory_bot_rails', '~> 4.8.2'
+  gem 'rspec-rails', '~> 3.8.1'
+  gem 'factory_bot_rails', '~> 4.11.1'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', '~> 10.0'
-  gem 'dotenv-rails', '~> 2.2.1'
+  gem 'dotenv-rails', '~> 2.5'
 end
 
 group :test do
-  gem 'capybara', '~> 3.0.2'
+  gem 'capybara', '~> 3.12'
   gem 'capybara-webkit', '~> 1.15.0'
-  gem 'database_cleaner', '~> 1.6.2'
+  gem 'database_cleaner', '~> 1.7'
   gem 'launchy', '~> 2.4.3'
   gem 'rails-controller-testing', '~> 1.0.2'
   gem 'shoulda-matchers', '~> 3.1.2'
