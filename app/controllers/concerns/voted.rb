@@ -1,6 +1,8 @@
 module Voted
   extend ActiveSupport::Concern
 
+  include Serialized
+
   included do
     before_action :authenticate_voting,  only: [:up_vote, :down_vote]
     before_action :set_votable,          only: [:up_vote, :down_vote, :delete_vote]

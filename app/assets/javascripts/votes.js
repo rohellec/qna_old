@@ -53,7 +53,7 @@ function createDeleteVoteLink(id, resource, elem) {
   var css_class = 'vote ' + voted;
   var link = $('<a>', {
     'href':  href,
-    'class': 'vote ' + css_class,
+    'class': css_class,
     'text':  'delete vote',
     'data-method': 'delete',
     'data-remote': true,

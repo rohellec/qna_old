@@ -1,12 +1,13 @@
 require "feature_helper"
 
-feature "Creating comment", %(
-  In order to discuss question
+feature "Creating a comment", %(
+  In order to clarify the answer
   As authenticated user
   I want to be able to leave a comment
 ) do
 
   given(:question) { create(:question) }
+  given!(:answer)  { create(:answer, question: question) }
 
   context "when authenticated" do
     given(:user) { create(:confirmed_user) }
@@ -14,26 +15,26 @@ feature "Creating comment", %(
     background do
       sign_in user
       visit question_path(question)
-      click_on "Add comment"
+      within(".answers") { click_on "Add comment" }
     end
 
     scenario "clicking 'Add comment' button renders new comment's form" do
-      expect(page).to have_css    "form.new_comment"
+      expect(page).to have_css    "form.new-comment"
       expect(page).to have_button "Create comment"
     end
 
     context "when filling comment's body" do
-      given(:comment_body) { attributes_for(:comment).body }
+      given(:comment_attributes) { attributes_for(:comment) }
 
       background do
-        fill_in :comment_body, with: comment_body
+        fill_in :comment_body, with: comment_attributes[:body]
         click_on "Create comment"
       end
 
       scenario "new comment is created" do
-        expect(page).to have_content comment_body
+        expect(page).to have_content comment_attributes[:body]
         expect(page).to have_content "Comment is successfully created"
-        expect(page).to have_no_css  "form.new_comment"
+        expect(page).to have_no_css  "form.new-comment"
       end
     end
 

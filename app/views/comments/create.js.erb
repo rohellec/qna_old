@@ -1,0 +1,33 @@
+$('#errors').html('');
+
+var commentableType = '<%= @commentable.class.to_s.underscore.dasherize %>'
+var commentableId   = '<%= @commentable.id %>'
+
+var commentable  = $('#' + commentableType + '-' + commentableId);
+var comments     = commentable.find('.comments');
+var commentsList = comments.find('ul');
+
+if (!commentsList.length) {
+  $(comments).html('<ul></ul>');
+  commentsList = comments.find('ul');
+}
+
+commentsList.append('<%= j render "comments/comment", comment: @comment %>');
+
+// Updating flash
+var flash = $('<div>', {
+  'class': 'alert success',
+  'text':  '<%= j flash[:message] %>'
+});
+
+$('.flash').html(flash);
+
+// Clearing and hiding form for new comment
+var newForm     = commentable.find('.new-comment');
+var commentBody = newForm.find('.comment-body');
+commentBody.val('');
+newForm.hide();
+
+// Replace 'Add comment' link
+var newCommentLink = commentable.find('.new-comment-link');
+newCommentLink.text('Add comment');

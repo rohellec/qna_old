@@ -1,19 +1,20 @@
 require "feature_helper"
 
 feature "Edit comment", %(
-  In order to update question's comment
+  In order to update answer's comment
   As comment's author
   I want to be able to edit comment
 ) do
 
-  given(:user) { create(:confirmed_user) }
+  given(:user)     { create(:confirmed_user) }
   given(:question) { create(:question) }
+  given(:answer)   { create(:answer) }
 
   context "as authenticated user" do
     background { sign_in user }
 
     context "when author" do
-      given!(:user_comment)  { create(:question, commentable: question, user: user) }
+      given!(:user_comment)  { create(:question, commentable: answer, user: user) }
 
       background { visit question_path(question) }
 
@@ -57,7 +58,7 @@ feature "Edit comment", %(
     end
 
     context "when is not an author" do
-      given!(:comment) { create(:comment, commentable: question) }
+      given!(:comment) { create(:comment, commentable: answer) }
 
       scenario "'Edit' link is not visible" do
         visit question_path(question)
