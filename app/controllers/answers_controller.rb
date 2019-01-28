@@ -5,8 +5,8 @@ class AnswersController < ApplicationController
   before_action :set_question, only: :create
   before_action :set_answer,   only: [:update, :destroy, :accept, :remove_accept]
   before_action :set_answer_question, only: [:destroy, :accept, :remove_accept]
-  before_action :answer_author?,   only: [:update, :destroy]
-  before_action :question_author?, only: [:accept, :remove_accept]
+  before_action :check_author, only: [:update, :destroy]
+  before_action(only: [:accept, :remove_accept]) { check_author(@question) }
 
   def create
     @answer = @question.answers.build(answer_params)
@@ -59,18 +59,6 @@ class AnswersController < ApplicationController
 
   def answer_params
     params.require(:answer).permit(:body, attachments_attributes: [:id, :file, :_destroy])
-  end
-
-  def answer_author?
-    return if current_user.author_of?(@answer)
-    flash[:notice] = "You need to be an author of the answer"
-    redirect_back(fallback_location: root_url)
-  end
-
-  def question_author?
-    return if current_user.author_of?(@question)
-    flash[:notice] = "You need to be an author of the question"
-    redirect_back(fallback_location: root_url)
   end
 
   def set_answer
