@@ -1,16 +1,13 @@
 var question = $('.question');
 var questionTitle = question.find('.question-title');
-var questionText  = question.find('.question-body p').first();
+var questionBody  = question.find('.question-body');
+var questionText  = questionBody.find('p').first();
 
-questionTitle.text('<%= @question.title %>');
-questionText.text('<%= @question.body %>');
+questionTitle.text('<%== j @question.title %>');
+questionText.text('<%==  j @question.body %>');
 
-// Updating flash
-var message = $('<div>', {
-  'class': 'alert success',
-  'text':  '<%= j flash[:success] %>'
-});
-$('.flash').html(message);
+var flashMessage = '<%== j flash[:success] %>';
+updateFlash('success', flashMessage);
 
 var attachments = question.find('.question-attachments');
 <% if @question.attachments.any? %>
@@ -34,6 +31,6 @@ questionForm.replaceWith(
   '<%= j render "form", question: @question, local: false, css_class: "edit-question" %>'
 );
 questionForm.hide();
-question.show();
+questionBody.show();
 
 $('.edit-question-link').removeClass('cancel').text('Edit');

@@ -23,7 +23,7 @@ feature "Edit question", %(
 
           scenario "'Edit Question' form becomes visible" do
             expect(page).to have_css "form.edit-question"
-            expect(page).to have_no_css ".question"
+            expect(page).to have_no_css ".question-body"
           end
 
           scenario "'Cancel' link becomes visible" do
@@ -36,6 +36,7 @@ feature "Edit question", %(
 
             scenario "hides 'Edit Question' form" do
               expect(page).to have_no_css "form.edit-question"
+              expect(page).to have_css ".question-body"
             end
 
             scenario "question title and body become visible" do
