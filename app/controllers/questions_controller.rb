@@ -11,8 +11,8 @@ class QuestionsController < ApplicationController
 
   def show
     @attachments = @question.attachments
-    @answers = @question.answers
-    @answer  = Answer.new
+    @answers     = @question.answers
+    @answer      = Answer.new
   end
 
   def new
@@ -66,12 +66,6 @@ class QuestionsController < ApplicationController
   end
 
   private
-
-  def check_author
-    return if current_user.author_of?(@question)
-    flash[:notice] = "You need to be an author of the question"
-    redirect_back(fallback_location: root_url)
-  end
 
   def set_question
     @question = Question.find(params[:id])
