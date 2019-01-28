@@ -32,3 +32,11 @@ function basename(filename) {
   return filename.replace(/\\/g, '/')
                  .replace(/(^.*\/)|(\.\w*$)/g, '');
 }
+
+function updateFlash(status, text) {
+  var message = $('<div>', {
+    'class': 'alert ' + status,
+    'text':  text
+  });
+  $('.flash').html(message);
+}

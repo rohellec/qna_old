@@ -55,10 +55,10 @@ feature "Update question", %(
       end
 
       scenario "Questions 'index' page is rendered with updated content" do
-        # 'find' causes capybara to wait until '.question' div is shown on the page
+        # 'find' causes capybara to wait until '.question-body' div is shown on the page
         # which means that js execution is finished.
         # Without 'find' capybara won't wait, and content on index page isn't updated
-        find(".question")
+        find(".question-body")
         visit questions_path
         within ".questions" do
           expect(page).to have_content "Updated title"
