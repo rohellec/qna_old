@@ -1,0 +1,4 @@
+en:
+  http_error:
+    unprocessable_entity: "Unprocessable entity"
+    not_found: "Entity not found"

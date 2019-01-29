@@ -51,6 +51,7 @@ group :test do
   gem 'launchy', '~> 2.4.3'
   gem 'rails-controller-testing', '~> 1.0.2'
   gem 'shoulda-matchers', '~> 3.1.2'
+  gem 'with_model', '~> 2.1.2'
 end
 
 group :development do
