@@ -15,8 +15,7 @@ function addVoteActionAjaxEvents(selectors) {
       });
       $('.flash').html(message);
 
-      var resource   = pluralize.singular(data.resource);
-      var voteRating = $('#' + resource + '-' + data.votable_id).find('.vote-rating');
+      var voteRating = $('#' + data.resource + '-' + data.votable_id).find('.vote-rating');
       voteRating.html(data.rating);
 
       var current = $(this);
@@ -27,12 +26,7 @@ function addVoteActionAjaxEvents(selectors) {
       var detail = event.detail;
       var data = detail[0], status = detail[1], xhr = detail[2];
 
-      // Updating flash
-      var message = $('<div>', {
-        'class': 'alert danger',
-        'text':  xhr.responseText
-      });
-      $('.flash').html(message);
+      updateFlash('danger', xhr.responseText)
     });
   });
 }
@@ -53,7 +47,7 @@ function createDeleteVoteLink(id, resource, elem) {
   var css_class = 'vote ' + voted;
   var link = $('<a>', {
     'href':  href,
-    'class': 'vote ' + css_class,
+    'class': css_class,
     'text':  'delete vote',
     'data-method': 'delete',
     'data-remote': true,

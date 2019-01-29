@@ -42,7 +42,7 @@ feature "Voting down the answer", %(
       end
 
       scenario "voting down decreases answer's vote rating" do
-        expect(page).to have_content I18n.t("controllers.voted.create_vote")
+        expect(page).to have_content I18n.t("controllers.voted.down_vote")
         within "#answer-#{answer.id} .vote-rating" do
           expect(page).to have_content(-1)
         end
