@@ -37,7 +37,7 @@ feature "Voting up the question", %(
       end
 
       scenario "voting up increases question's vote rating" do
-        expect(page).to have_content I18n.t("controllers.voted.create_vote")
+        expect(page).to have_content I18n.t("controllers.voted.up_vote")
         within ".question-vote .vote-rating" do
           expect(page).to have_content 1
         end

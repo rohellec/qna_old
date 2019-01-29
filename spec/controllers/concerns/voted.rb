@@ -19,11 +19,6 @@ shared_examples "voted" do
           post :up_vote, params: { id: user_votable }, format: :json
           expect(response).to have_http_status(:unprocessable_entity)
         end
-
-        it "redirects to fallback_location root_url when requesting html" do
-          post :up_vote, params: { id: user_votable }
-          expect(response).to redirect_to root_url
-        end
       end
 
       context "when is not author" do
@@ -82,11 +77,6 @@ shared_examples "voted" do
         end.not_to change(Vote, :count)
       end
 
-      it "redirects to fallback_location root_url when requesting html" do
-        post :up_vote, params: { id: votable }
-        expect(response).to redirect_to root_url
-      end
-
       it "returns :unprocessable_entity status when requesting json" do
         post :up_vote, params: { id: votable }, format: :json
         expect(response).to have_http_status(:unprocessable_entity)
@@ -110,11 +100,6 @@ shared_examples "voted" do
         it "returns :unprocessable_entity status when requesting json" do
           post :down_vote, params: { id: user_votable }, format: :json
           expect(response).to have_http_status(:unprocessable_entity)
-        end
-
-        it "redirects to fallback_location root_url when requesting html" do
-          post :down_vote, params: { id: user_votable }
-          expect(response).to redirect_to root_url
         end
       end
 
@@ -177,11 +162,6 @@ shared_examples "voted" do
       it "returns :unprocessable_entity status when requesting json" do
         post :down_vote, params: { id: votable }, format: :json
         expect(response).to have_http_status(:unprocessable_entity)
-      end
-
-      it "redirects to fallback_location root_url when requesting html" do
-        post :down_vote, params: { id: votable }
-        expect(response).to redirect_to root_url
       end
     end
   end
