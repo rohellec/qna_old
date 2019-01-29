@@ -2,16 +2,16 @@ require "rails_helper"
 require "models/concerns/votable_spec"
 
 describe Answer do
-  let(:user) { create(:user) }
+  let(:user)     { create(:user) }
   let(:question) { create(:question, user: user) }
 
   it_behaves_like "votable"
 
   it { is_expected.to belong_to :user }
   it { is_expected.to belong_to :question }
-  it { is_expected.to validate_presence_of :body }
-
   it { is_expected.to have_many(:comments).dependent(:destroy) }
+
+  it { is_expected.to validate_presence_of :body }
 
   describe ":accepted scope" do
     let!(:accepted_answers) { create_pair(:accepted_answer) }

@@ -1,19 +1,20 @@
 require "feature_helper"
 
-feature "Updating question's comment", %(
+feature "Updating answer's comment", %(
   In order to fix errors in comment's body
   As comment's author
   I want to be able to update comment
 ), js: true do
 
-  given(:user)     { create(:confirmed_user) }
-  given(:question) { create(:question) }
-  given!(:comment) { create(:comment, commentable: question, user: user) }
+  given(:user)      { create(:confirmed_user) }
+  given!(:question) { create(:question) }
+  given!(:answer)   { create(:answer, question: question) }
+  given!(:comment)  { create(:comment, commentable: answer, user: user) }
 
   background do
     sign_in user
     visit question_path(question)
-    within(".comments") { click_on "Edit" }
+    within(".answers .comments") { click_on "Edit" }
   end
 
   context "with new content" do

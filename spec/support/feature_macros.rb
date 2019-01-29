@@ -12,4 +12,12 @@ module FeatureMacros
     click_on "Add Attachment"
     attach_file "File", Rails.root.join("spec/fixtures/#{attachment}")
   end
+
+  def add_comment_to(commentable)
+    within("##{commentable.class.to_s.underscore}-#{commentable.id}") do
+      click_on "Add comment"
+      fill_in  "comment[body]", with: "Comment text"
+      click_on "Save Comment"
+    end
+  end
 end

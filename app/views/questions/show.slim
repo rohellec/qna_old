@@ -23,6 +23,9 @@ div id="question-#{@question.id}" class="question #{'answered' if @question.answ
       |  |
       =< link_to "Edit", "", class: "edit-question-link"
 
+  == render "comments/comments",    commentable: @question
+  == render "comments/add_comment", commentable: @question
+
 .answers
   - if @answers.any?
     table
