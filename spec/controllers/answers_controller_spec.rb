@@ -1,5 +1,5 @@
 require 'rails_helper'
-require "controllers/concerns/voted_spec"
+require "controllers/concerns/voted"
 
 describe AnswersController do
   let(:user)     { create(:confirmed_user) }

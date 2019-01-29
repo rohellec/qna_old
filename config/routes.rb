@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  concern :commentable do
-    resources :comments, shallow: true, only: [:create, :update, :destroy]
+  concern :commentable do |options|
+    resources :comments, shallow: true, only:     [:create, :update, :destroy],
+                                        defaults: { commentable: options[:type] }
   end
 
   concern :votable do
@@ -13,9 +14,12 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :questions, concerns: [:commentable, :votable] do
-    resources :answers, concerns: [:commentable, :votable],
+  resources :questions, concerns: :votable do
+    concerns :commentable, type: "questions"
+
+    resources :answers, concerns: :votable,
                         shallow: true, only: [:create, :update, :destroy] do
+      concerns :commentable, type: "answers"
       member do
         post "accept"
         post "remove_accept"

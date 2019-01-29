@@ -100,7 +100,9 @@ CREATE TABLE public.comments (
     body text,
     commentable_type character varying,
     commentable_id bigint,
-    user_id bigint
+    user_id bigint,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
