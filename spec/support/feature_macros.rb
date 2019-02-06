@@ -20,4 +20,10 @@ module FeatureMacros
       click_on "Save Comment"
     end
   end
+
+  def create_question(attributes)
+    fill_in :question_title, with: attributes[:title]
+    fill_in :question_body,  with: attributes[:body]
+    click_on "Create Question"
+  end
 end

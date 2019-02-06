@@ -2,20 +2,13 @@ $(document).on('turbolinks:load', function() {
   $('.answers').on('click', '.edit-answer-link', function(e) {
     e.preventDefault();
 
-    var current = $(this);
+    var current  = $(this);
     var answerId = current.data('answerId');
-    var answer = $('#answer-' + answerId);
-    var editForm = answer.find('form');
-    var content = answer.find('p');
+    var answer   = $('#answer-' + answerId);
+    var editForm = answer.find('.edit-answer');
+    var content  = answer.find('.answer-text');
 
-    if (!current.hasClass('cancel')) {
-      current.addClass('cancel');
-      current.text('Cancel');
-    } else {
-      current.removeClass('cancel');
-      current.text('Edit');
-    }
-
+    toggleLink(current, 'Edit');
     editForm.toggle();
     content.toggle();
   });

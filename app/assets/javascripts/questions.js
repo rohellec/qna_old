@@ -6,15 +6,18 @@ $(document).on('turbolinks:load', function() {
     var editForm     = $('.edit-question');
     var questionBody = $('.question-body');
 
-    if (!current.hasClass('cancel')) {
-      current.addClass('cancel');
-      current.text('Cancel');
-    } else {
-      current.removeClass('cancel');
-      current.text('Edit');
-    }
-
+    toggleLink(current, 'Edit');
     editForm.toggle();
     questionBody.toggle();
   });
 });
+
+function findOrCreateQuestionsList() {
+  var questions     = $('.questions');
+  var questionsList = questions.find('tbody');
+  if (!questionsList.length) {
+    questions.html('<table><tbody></tbody></table>');
+    questionsList = questions.find('tbody');
+  }
+  return questionsList;
+}

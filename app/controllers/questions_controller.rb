@@ -5,6 +5,8 @@ class QuestionsController < ApplicationController
   before_action :set_question,  only: [:show, :edit, :update, :destroy]
   before_action :check_author,  only: [:edit, :update, :destroy]
 
+  after_action  :publish_question, only: :create
+
   def index
     @questions = Question.all
   end
@@ -26,7 +28,7 @@ class QuestionsController < ApplicationController
     @question = Question.new(question_params)
     @question.user = current_user
     if @question.save
-      redirect_to @question, flash: { success: "New question has been successfully created" }
+      redirect_to @question, flash: { success: t(".message") }
     else
       render :new
     end
@@ -36,11 +38,11 @@ class QuestionsController < ApplicationController
     respond_to do |format|
       if @question.update(question_params)
         format.html do
-          flash[:success] = "Question has been successfully updated"
+          flash[:success] = t(".message")
           redirect_to @question
         end
         format.js do
-          flash.now[:success] = "Question has been successfully updated"
+          flash.now[:success] = t(".message")
           render "update", layout: false
         end
       else
@@ -52,7 +54,7 @@ class QuestionsController < ApplicationController
 
   def destroy
     @question.destroy
-    message = "Question has been successfully deleted"
+    message = t(".message")
     respond_to do |format|
       format.js do
         flash.now[:success] = message
@@ -67,11 +69,16 @@ class QuestionsController < ApplicationController
 
   private
 
-  def set_question
-    @question = Question.find(params[:id])
-  end
-
   def question_params
     params.require(:question).permit(:title, :body, attachments_attributes: [:id, :file, :_destroy])
+  end
+
+  def publish_question
+    return if @question.errors.any?
+    ActionCable.server.broadcast('questions', @question)
+  end
+
+  def set_question
+    @question = Question.find(params[:id])
   end
 end

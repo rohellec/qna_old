@@ -1,0 +1,8 @@
+en:
+  questions:
+    create:
+      message: "New question has been successfully created"
+    update:
+      message: "Question has been successfully updated"
+    destroy:
+      message: "Question has been successfully deleted"
