@@ -22,7 +22,7 @@ module Serialized
   end
 
   def render_unprocessable_with_message(message = nil)
-    message ||= t("http_error.unprocessable_entity")
+    message ||= t(".unprocessable", default: :"http_error.unprocessable_entity")
     render plain: message, status: :unprocessable_entity
   end
 end

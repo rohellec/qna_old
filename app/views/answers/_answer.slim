@@ -11,7 +11,7 @@
                   class: "accept-answer-link", method: :post, remote: true
 
     td.answer-body
-      p
+      p.answer-text
         = answer.body
       - if answer.attachments.any?
         div.answer-attachments

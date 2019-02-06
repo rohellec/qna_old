@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
+  before_action :gon_user, unless: :devise_controller?
+
   def check_author(item = nil)
     item ||= instance_variable_get("@#{resource_type}")
     return if current_user.author_of?(item)
@@ -14,5 +16,11 @@ class ApplicationController < ActionController::Base
 
   def resource_type
     controller_name.singularize
+  end
+
+  private
+
+  def gon_user
+    gon.user_id = current_user&.id
   end
 end

@@ -13,10 +13,17 @@
 //= require jquery
 //= require rails-ujs
 //= require turbolinks
+//= require action_cable
 //= require cocoon
 //= require pluralize
 //= require_tree .
 //= require_self
+
+App.utils = {}
+App.utils.render = function(template, options) {
+  var path = 'templates/' + template;
+  return JST[path](options);
+}
 
 $(document).on('turbolinks:load cocoon:after-insert', function() {
   $('.nested-fields').change(function() {
@@ -31,6 +38,16 @@ $(document).on('turbolinks:load cocoon:after-insert', function() {
 function basename(filename) {
   return filename.replace(/\\/g, '/')
                  .replace(/(^.*\/)|(\.\w*$)/g, '');
+}
+
+function toggleLink(link, name) {
+  if (link.hasClass('cancel')) {
+    link.removeClass('cancel');
+    link.text(name);
+  } else {
+    link.addClass('cancel');
+    link.text('Cancel');
+  }
 }
 
 function updateFlash(status, text) {

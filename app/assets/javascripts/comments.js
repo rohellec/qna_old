@@ -43,16 +43,6 @@ function addEditCommentToggleEvent(elem) {
   });
 }
 
-function toggleLink(link, name) {
-  if (link.hasClass('cancel')) {
-    link.removeClass('cancel');
-    link.text(name);
-  } else {
-    link.addClass('cancel');
-    link.text('Cancel');
-  }
-}
-
 function handleNewCommentAjaxEvents(elem) {
   handleNewCommentAjaxSuccessEvent(elem);
   handleFormAjaxErrorEvent(elem, '.new-comment');
@@ -140,8 +130,6 @@ function handleFormAjaxErrorEvent(elem, selector) {
   $(elem).on('ajax:error', selector, function(event) {
     var detail   = event.detail;
     var messages = detail[0];
-
-    console.log(messages);
 
     var errors = buildErrorsContainer(messages);
     var form = $(this);
