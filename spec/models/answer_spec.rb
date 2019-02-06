@@ -29,8 +29,12 @@ describe Answer do
   end
 
   describe "validation :unique_acceptance" do
-    let!(:accepted_answer) { create(:accepted_answer, question: question) }
-    let!(:answer) { build(:accepted_answer, question: question) }
+    let!(:answered_question) { create(:answered_question) }
+    let!(:answer)            { build(:accepted_answer, question: answered_question) }
+
+    it "makes accepted answer invalid if there is already one" do
+      expect(answer).to be_invalid
+    end
 
     it "doesn't save answer to database if invalid" do
       expect { answer.save }.not_to change(question.answers, :count)
@@ -50,6 +54,10 @@ describe Answer do
 
     it "sets #accepted? for chosen answer to true" do
       expect(answer).to be_accepted
+    end
+
+    it "sets #answered? for chosen answer's question to true" do
+      expect(question).to be_answered
     end
 
     it "makes selected answer first in the default scope" do
@@ -72,20 +80,40 @@ describe Answer do
         expect(other_answer).to be_accepted
       end
 
+      it "sets #answered? for chosen answer's question to true" do
+        expect(question).to be_answered
+      end
+
       it "makes new answer first in the default scope" do
         expect(other_answer).to eq question.answers.first
+      end
+
+      it "adds new answer to accepted scope" do
+        expect(described_class.accepted).to include(other_answer)
+      end
+
+      it "removes previous answer from accepted scope" do
+        answer.reload
+        expect(described_class.accepted).not_to include(answer)
       end
     end
   end
 
   describe "#remove_accept" do
-    let!(:answer) { create(:answer, question: question) }
+    let!(:answer)          { create(:answer, question: question) }
     let!(:accepted_answer) { create(:accepted_answer, question: question) }
 
-    before { accepted_answer.remove_accept }
+    before do
+      question.update(answered: true)
+      accepted_answer.remove_accept
+    end
 
     it "sets #accepted? for answer to false" do
       expect(accepted_answer).not_to be_accepted
+    end
+
+    it "sets #answered? for question's answer to false" do
+      expect(question).not_to be_answered
     end
 
     it "applies default scope ordering for answers" do

@@ -7,6 +7,13 @@ FactoryBot.define do
     body  { generate(:question_body)  }
     user
 
+    factory :answered_question do
+      after(:create) do |question|
+        create(:accepted_answer, question: question)
+        question.update(answered: true)
+      end
+    end
+
     factory :question_with_attachment do
       attachments_attributes { [attributes_for(:question_attachment)] }
     end
@@ -22,8 +29,8 @@ FactoryBot.define do
   end
 
   factory :invalid_question, class: Question do
-    title nil
-    body  nil
+    title { nil }
+    body  { nil }
     user
   end
 end

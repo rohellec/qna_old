@@ -11,12 +11,17 @@ class Question < ApplicationRecord
                                 reject_if: -> (attributes) { attributes['file'].blank? }
 
   validates :title, :body, presence: true
+  validate  :question_answered
 
   def accepted_answer
     answers.accepted.take
   end
 
-  def answered?
-    !accepted_answer.nil?
+  private
+
+  def question_answered
+    return unless answered?
+    error_message = "Question must have an accepted answer before it can be marked as answered"
+    errors.add(:base, error_message) if accepted_answer.nil?
   end
 end

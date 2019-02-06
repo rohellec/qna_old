@@ -17,19 +17,23 @@ class Answer < ApplicationRecord
 
   def accept
     Answer.transaction do
-      question.accepted_answer&.remove_accept
-      update(accepted: true)
+      question.accepted_answer&.update!(accepted: false)
+      update!(accepted: true)
+      question.update!(answered: true)
     end
   end
 
   def remove_accept
-    update(accepted: false)
+    Answer.transaction do
+      update!(accepted: false)
+      question.update!(answered: false)
+    end
   end
 
   protected
 
   def unique_acceptance
     return unless accepted?
-    errors.add(:base, "Only one answer can be accepted") if question.answered?
+    errors.add(:base, "Only one answer can be accepted") if question.accepted_answer.present?
   end
 end
