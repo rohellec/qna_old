@@ -135,7 +135,8 @@ CREATE TABLE public.questions (
     body text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    user_id bigint
+    user_id bigint,
+    answered boolean DEFAULT false
 );
 
 
@@ -475,6 +476,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20180625193235'),
 ('20180720152108'),
 ('20180808222141'),
-('20181022192604');
+('20181022192604'),
+('20190130103359');
 
 

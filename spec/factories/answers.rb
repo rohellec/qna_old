@@ -7,7 +7,7 @@ FactoryBot.define do
     user
 
     factory :accepted_answer do
-      accepted true
+      accepted { true }
     end
 
     factory :answer_with_attachment do
@@ -25,7 +25,7 @@ FactoryBot.define do
   end
 
   factory :invalid_answer, class: Answer do
-    body nil
+    body { nil }
     question
     user
   end

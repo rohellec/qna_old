@@ -19,6 +19,19 @@ describe Question do
   it { is_expected.to validate_presence_of :title }
   it { is_expected.to validate_presence_of :body  }
 
+  describe "validation :question_answered" do
+    before { question.update(answered: true) }
+
+    it "makes question invalid if there're no accepted answers" do
+      expect(question).to be_invalid
+    end
+
+    it "adds error message to invalid question" do
+      error_message = "Question must have an accepted answer before it can be marked as answered"
+      expect(question.errors.full_messages).to include(error_message)
+    end
+  end
+
   describe "#answers" do
     let!(:answer_one) { create(:answer, question: question) }
     let!(:answer_two) { create(:answer, question: question) }
