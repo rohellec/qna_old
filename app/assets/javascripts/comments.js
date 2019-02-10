@@ -225,7 +225,7 @@ function buildEditCommentForm(commentData) {
     'value': '\u2713'
   });
 
-  var csrfToken = $('meta[name="csrf-token"]').attr('content');
+  var csrfToken = App.utils.getCSRF();
   var hiddenAuthenticityToken = $('<input>', {
     'type':  'hidden',
     'name':  'authenticity-token',

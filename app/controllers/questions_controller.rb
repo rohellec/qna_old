@@ -2,8 +2,9 @@ class QuestionsController < ApplicationController
   include Voted
 
   before_action :authenticate_user!,  except: [:show, :index]
-  before_action :set_question,  only: [:show, :edit, :update, :destroy]
-  before_action :check_author,  only: [:edit, :update, :destroy]
+  before_action :set_question, only: [:show, :edit, :update, :destroy]
+  before_action :gon_question, only: :show
+  before_action :check_author, only: [:edit, :update, :destroy]
 
   after_action  :publish_question, only: :create
 
@@ -68,6 +69,11 @@ class QuestionsController < ApplicationController
   end
 
   private
+
+  def gon_question
+    gon.question_id      = @question.id
+    gon.question_user_id = @question.user_id
+  end
 
   def question_params
     params.require(:question).permit(:title, :body, attachments_attributes: [:id, :file, :_destroy])

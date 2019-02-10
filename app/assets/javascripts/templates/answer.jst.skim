@@ -1,0 +1,43 @@
+tr id="answer-#{@answer.id}"
+  td == App.utils.render "answer_votes", @answer
+
+  - if gon.user_id == gon.question_user_id
+    td
+      a href="/answers/#{@answer.id}/remove_accept" class="remove-accept-answer-link" data-method="post" data-remote="true"
+        | Remove accept
+      a href="/answers/#{@answer.id}/accept" class="accept-answer-link" data-method="post" data-remote="true"
+        | Accept
+
+  td.answer-body
+    p.answer-text = @answer.body
+
+    - if @attachments.length != 0
+      .answer-attachments
+        p Attachments
+        ul
+          - for attachment in @attachments
+            == App.utils.render "attachment", attachment
+
+    - if gon.user_id == @answer.user_id
+      == App.utils.render "answer_form", answer: @answer, attachments: @attachments
+
+    .comments
+
+    .add-comment
+      - if gon.user_id
+        a.new-comment-link data-commentable-id=@answer.id data-commentable-type="answer" href="#"
+          | Add comment
+
+        == App.utils.render "new_comment", @answer
+
+  td
+    - if gon.user_id == @answer.user_id
+      a> class="edit-answer-link" data-answer-id="#{@answer.id}" href="#"
+        | Edit
+      | |
+      a< data-remote="true" rel="nofollow" data-method="delete" href="/answers/#{@answer.id}"
+        | Delete
+
+
+
+

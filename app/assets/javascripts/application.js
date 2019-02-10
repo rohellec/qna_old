@@ -25,6 +25,10 @@ App.utils.render = function(template, options) {
   return JST[path](options);
 }
 
+App.utils.getCSRF = function() {
+  return $('meta[name="csrf-token"]').attr('content');
+}
+
 $(document).on('turbolinks:load cocoon:after-insert', function() {
   $('.nested-fields').change(function() {
     var current = $(this);

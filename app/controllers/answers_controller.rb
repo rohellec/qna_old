@@ -8,6 +8,8 @@ class AnswersController < ApplicationController
   before_action :check_author, only: [:update, :destroy]
   before_action(only: [:accept, :remove_accept]) { check_author(@question) }
 
+  after_action :publish_answer, only: :create
+
   def create
     @answer = @question.answers.build(answer_params)
     @answer.user = current_user
@@ -59,6 +61,11 @@ class AnswersController < ApplicationController
 
   def answer_params
     params.require(:answer).permit(:body, attachments_attributes: [:id, :file, :_destroy])
+  end
+
+  def publish_answer
+    return if @answer.errors.any?
+    AnswersChannel.broadcast_to(@question, answer: @answer, attachments: @answer.attachments)
   end
 
   def set_answer
