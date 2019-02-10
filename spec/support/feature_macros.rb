@@ -26,4 +26,9 @@ module FeatureMacros
     fill_in :question_body,  with: attributes[:body]
     click_on "Create Question"
   end
+
+  def create_answer(attributes)
+    fill_in :answer_body, with: attributes[:body]
+    click_on "Create Answer"
+  end
 end

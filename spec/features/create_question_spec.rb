@@ -6,9 +6,9 @@ feature "Creating question", %(
   I want to be able to create questions
 ) do
 
-  context "when authenticated" do
-    given(:user) { create(:confirmed_user) }
+  given(:user) { create(:confirmed_user) }
 
+  context "when authenticated" do
     background do
       sign_in user
       visit questions_path
@@ -57,7 +57,6 @@ feature "Creating question", %(
   end
 
   context "when using different session", js: true do
-    given(:user) { create(:confirmed_user) }
     given(:question_attributes) { attributes_for(:question) }
 
     scenario "question appears on guest's question index page" do

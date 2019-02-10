@@ -7,10 +7,9 @@ feature "Creating answer", %(
 ) do
 
   given(:question) { create(:question) }
+  given(:user)     { create(:confirmed_user) }
 
-  context "For authenticated user" do
-    given(:user) { create(:confirmed_user) }
-
+  context "when authenticated" do
     background do
       sign_in user
       visit question_path(question)
@@ -34,8 +33,7 @@ feature "Creating answer", %(
       given(:answer_attributes) { attributes_for(:answer) }
 
       background do
-        fill_in :answer_body, with: answer_attributes[:body]
-        click_on "Create Answer"
+        create_answer(answer_attributes)
       end
 
       scenario "question's page is rendered with new answer added" do
@@ -46,10 +44,32 @@ feature "Creating answer", %(
     end
   end
 
-  context "For non-authenticated user" do
+  context "when non-authenticated" do
     scenario "'New Answer' form is not visible on the question's page" do
       visit question_path(question)
       expect(page).to have_no_css "form.new_answer"
+    end
+  end
+
+  context "when using differen session", js: true do
+    given(:answer_attributes) { attributes_for(:answer) }
+
+    scenario "answer appears on guest's question page" do
+      Capybara.using_session(:guest) do
+        visit question_path(question)
+      end
+
+      Capybara.using_session(:author) do
+        sign_in(user)
+        visit question_path(question)
+        create_answer(answer_attributes)
+        expect(page).to have_content answer_attributes[:body]
+      end
+
+      Capybara.using_session(:guest) do
+        expect(page).to have_content answer_attributes[:body], count: 1
+        expect(page).to have_no_content "Nobody has given any answer yet!"
+      end
     end
   end
 end

@@ -1,0 +1,17 @@
+form[class="edit-answer" enctype="multipart/form-data" action="/answers/#{@answer.id}"
+     data-remote="true" method="post"]
+
+  input type="hidden" name="utf8" value="\u2713"
+  input type="hidden" name="_method" value="patch"
+  input type="hidden" name="authenticity_token" value=App.utils.getCSRF()
+
+  .field
+    textarea name="answer[body]" = @answer.body
+
+  .attachments_fields
+    p Attachments
+    - for attachment, index in @attachments
+      == App.utils.render "attachment_fields", attachment: attachment, index: index
+
+  .actions
+    input type="submit" name="commit" value="Update Answer" data-disable-with="Update Answer"

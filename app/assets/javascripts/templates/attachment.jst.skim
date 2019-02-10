@@ -1,0 +1,2 @@
+li id="attachment-#{@id}"
+  a href="/uploads/attachment/file/#{@id}/#{@file}" =@file

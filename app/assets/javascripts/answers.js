@@ -13,3 +13,18 @@ $(document).on('turbolinks:load', function() {
     content.toggle();
   });
 });
+
+function findAnswer(id) {
+  return $('#answer-' + id);
+}
+
+function findOrCreateAnswersList() {
+  var answers     = $('.answers');
+  var answersList = answers.find('tbody');
+  if (!answersList.length) {
+    answers.html('<table><tbody></tbody></table>');
+    answersList = answers.find('tbody');
+  }
+  return answersList;
+}
+

@@ -7,7 +7,10 @@ if (!answers.length) {
   answers = $('.answers tbody');
 }
 
-answers.append('<%= j render @answer %>');
+var answer = findAnswer('<% @answer.id %>');
+if (!answer.length) {
+  answers.append('<%= j render @answer %>');
+}
 
 // Updating flash
 var message = $('<div>', {
