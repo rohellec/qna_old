@@ -6,19 +6,15 @@ $(document).on('turbolinks:load', function() {
     App.answersChannel = App.cable.subscriptions.create(
       { channel: 'AnswersChannel', question_id: gon.question_id },
       {
-        connected: function() {
-          App.questionsChannel && App.questionsChannel.unsubscribe();
-        },
-
         received: function(data) {
           if (!data.answer) return;
-          var answer = $('#answer-' + data.answer.id);
+          var answer = findAnswer(data.answer.id);
           if (answer.length) return;
 
           var answersList = findOrCreateAnswersList();
-          var newAnswer   = App.utils.render('answer', data);
+          var newAnswer   = App.utils.render('answers/answer', data);
           answersList.append(newAnswer);
-        },
+        }
       }
     );
   }

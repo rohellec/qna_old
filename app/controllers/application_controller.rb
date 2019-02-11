@@ -10,6 +10,8 @@ class ApplicationController < ActionController::Base
     redirect_back(fallback_location: root_url)
   end
 
+  # private?
+
   def model_klass
     controller_name.classify.constantize
   end

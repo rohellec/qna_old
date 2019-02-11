@@ -1,0 +1,12 @@
+form[class="edit-comment" action="/comments/#{@id}"
+     accept-charset="UTF-8" data-remote="true" method="post"]
+
+  input type="hidden" name="utf8" value="\u2713"
+  input type="hidden" name="_method" value="patch"
+  input type="hidden" name="authenticity_token" value=App.utils.getCSRF()
+
+  .field
+    textarea name="comment[body]" = @body
+
+  .actions
+    input type="submit" name="commit" value="Update Comment" data-disable-with="Update Comment"

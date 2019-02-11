@@ -51,7 +51,7 @@ feature "Creating answer", %(
     end
   end
 
-  context "when using differen session", js: true do
+  context "when using different sessions", js: true do
     given(:answer_attributes) { attributes_for(:answer) }
 
     scenario "answer appears on guest's question page" do
@@ -63,11 +63,11 @@ feature "Creating answer", %(
         sign_in(user)
         visit question_path(question)
         create_answer(answer_attributes)
-        expect(page).to have_content answer_attributes[:body]
+        expect(page).to have_content answer_attributes[:body], count: 1
       end
 
       Capybara.using_session(:guest) do
-        expect(page).to have_content answer_attributes[:body], count: 1
+        expect(page).to have_content answer_attributes[:body]
         expect(page).to have_no_content "Nobody has given any answer yet!"
       end
     end

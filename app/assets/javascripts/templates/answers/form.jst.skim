@@ -1,5 +1,5 @@
 form[class="edit-answer" enctype="multipart/form-data" action="/answers/#{@answer.id}"
-     data-remote="true" method="post"]
+     accept-charset="UTF-8" data-remote="true" method="post"]
 
   input type="hidden" name="utf8" value="\u2713"
   input type="hidden" name="_method" value="patch"
@@ -11,7 +11,7 @@ form[class="edit-answer" enctype="multipart/form-data" action="/answers/#{@answe
   .attachments_fields
     p Attachments
     - for attachment, index in @attachments
-      == App.utils.render "attachment_fields", attachment: attachment, index: index
+      == App.utils.render "attachments/attachment_fields", attachment: attachment, index: index
 
   .actions
     input type="submit" name="commit" value="Update Answer" data-disable-with="Update Answer"

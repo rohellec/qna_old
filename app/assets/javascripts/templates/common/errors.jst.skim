@@ -1,0 +1,5 @@
+#errors class="alert"
+  = "#{ pluralize('error', @messages.length, true) } prohibited this resource from being saved:"
+  ul
+    - for message in @messages
+      li = message

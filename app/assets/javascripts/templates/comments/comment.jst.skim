@@ -1,0 +1,15 @@
+li id="comment-#{@id}"
+  p.comment-body
+    span = @body
+
+  - if gon.user_id == @user_id
+    == App.utils.render "comments/form", @
+
+    p
+      a> class="edit-comment-link" data-comment-id="#{@id}" href="#"
+        | Edit
+      | |
+      a<[class="delete-comment-link" data-remote="true" rel="nofollow"
+         data-method="delete" href="/comments/#{@id}"]
+        | Delete
+
