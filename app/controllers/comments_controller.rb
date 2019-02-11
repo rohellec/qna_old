@@ -1,11 +1,15 @@
 class CommentsController < ApplicationController
   include Serialized
 
+  STREAM_MODEL = Question
+
   before_action :authenticate_user!
   before_action :set_commentable,      only: :create
   before_action :set_comment,          only: [:update, :destroy]
   before_action :check_author,         only: [:update, :destroy]
   before_action :check_resource_found, only: [:update, :destroy]
+
+  after_action :publish_comment, only: :create
 
   def create
     @comment = @commentable.comments.build(comment_params)
@@ -42,6 +46,16 @@ class CommentsController < ApplicationController
 
   def commentable_id
     params[commentable_name.singularize + "_id"]
+  end
+
+  def publish_comment
+    return if @comment.errors.any?
+    question = if @comment.commentable_type == STREAM_MODEL.to_s
+                 @comment.commentable
+               else
+                 @comment.commentable.question
+               end
+    CommentsChannel.broadcast_to(question, @comment)
   end
 
   def set_comment

@@ -1,8 +1,0 @@
-div.answer-vote
-  a href="/answers/#{@id}/up_vote" class="vote up-vote" data-method="post" data-remote="true"
-    | up vote
-
-  span.vote-rating 0
-
-  a href="/answers/#{@id}/down_vote" class="vote down-vote" data-method="post" data-remote="true"
-    | down vote

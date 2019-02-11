@@ -5,7 +5,7 @@ $(document).on('turbolinks:load', function() {
       received: function(question) {
         if (!question) return;
         var questionsList = findOrCreateQuestionsList();
-        var newQuestion   = App.utils.render('question', question);
+        var newQuestion   = App.utils.render('questions/question', question);
         questionsList.append(newQuestion);
       }
     });

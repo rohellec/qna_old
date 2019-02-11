@@ -6,19 +6,22 @@ feature "Creating comment", %(
   I want to be able to add a comment
 ) do
 
+  given(:user)      { create(:confirmed_user) }
   given!(:question) { create(:question) }
   given!(:answer)   { create(:answer, question: question) }
+  given(:comment_attributes) { attributes_for(:comment) }
 
   context "when authenticated", js: true do
-    given(:user) { create(:confirmed_user) }
-
     background do
       sign_in user
       visit question_path(question)
-      within(".answers") { click_on "Add comment" }
     end
 
     describe "after clicking 'Add comment' link" do
+      background do
+        within(".answers") { click_on "Add comment" }
+      end
+
       scenario "new comment form is rendered" do
         expect(page).to have_css    "form.new-comment"
         expect(page).to have_button "Save Comment"
@@ -49,22 +52,22 @@ feature "Creating comment", %(
     end
 
     context "when filling comment's body" do
-      given(:comment_body) { attributes_for(:comment)[:body] }
-
-      background do
-        fill_in "comment[body]", with: comment_body
-        click_on "Save Comment"
-      end
+      background { add_comment_to(answer, comment_attributes) }
 
       scenario "new comment is created" do
-        expect(page).to have_content comment_body
+        expect(page).to have_content comment_attributes[:body]
         expect(page).to have_content "Your comment has been successfully created"
         expect(page).to have_no_css  "form.new-comment"
       end
     end
 
     context "without filling comment's body" do
-      background { click_on "Save Comment" }
+      background do
+        within(".answers") do
+          click_on "Add comment"
+          click_on "Save Comment"
+        end
+      end
 
       scenario "error is rendered on the page" do
         expect(page).to have_css     "form.new-comment"
@@ -77,6 +80,29 @@ feature "Creating comment", %(
     scenario "'Add comment' button is not visible" do
       visit question_path(question)
       expect(page).to have_no_content "Add comment"
+    end
+  end
+
+  context "when using different sessions", js: true do
+    scenario "comment appears on guest's question page" do
+      Capybara.using_session(:guest) do
+        visit question_path(question)
+      end
+
+      Capybara.using_session(:author) do
+        sign_in(user)
+        visit question_path(question)
+        add_comment_to(answer, comment_attributes)
+        within "#answer-#{answer.id}" do
+          expect(page).to have_content comment_attributes[:body], count: 1
+        end
+      end
+
+      Capybara.using_session(:guest) do
+        within "#answer-#{answer.id}" do
+          expect(page).to have_content comment_attributes[:body]
+        end
+      end
     end
   end
 end

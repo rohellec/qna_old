@@ -1,5 +1,5 @@
 tr id="answer-#{@answer.id}"
-  td == App.utils.render "answer_votes", @answer
+  td == App.utils.render "votes/votes", votable: @answer, type: "answers"
 
   - if gon.user_id == gon.question_user_id
     td
@@ -16,10 +16,10 @@ tr id="answer-#{@answer.id}"
         p Attachments
         ul
           - for attachment in @attachments
-            == App.utils.render "attachment", attachment
+            == App.utils.render "attachments/attachment", attachment
 
     - if gon.user_id == @answer.user_id
-      == App.utils.render "answer_form", answer: @answer, attachments: @attachments
+      == App.utils.render "answers/form", answer: @answer, attachments: @attachments
 
     .comments
 
@@ -28,7 +28,7 @@ tr id="answer-#{@answer.id}"
         a.new-comment-link data-commentable-id=@answer.id data-commentable-type="answer" href="#"
           | Add comment
 
-        == App.utils.render "new_comment", @answer
+        == App.utils.render "comments/new_comment", @answer
 
   td
     - if gon.user_id == @answer.user_id

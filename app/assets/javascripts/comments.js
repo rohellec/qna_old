@@ -43,6 +43,10 @@ function addEditCommentToggleEvent(elem) {
   });
 }
 
+function findComment(id) {
+  return $('#comment-' + id);
+}
+
 function handleNewCommentAjaxEvents(elem) {
   handleNewCommentAjaxSuccessEvent(elem);
   handleFormAjaxErrorEvent(elem, '.new-comment');
@@ -66,13 +70,7 @@ function handleDeleteCommentAjaxEvent(elem) {
     var comment = $('#comment-' + commentData.id);
 
     comment.remove();
-
-    // Update flash
-    var message = $('<div>', {
-      'class': 'alert success',
-      'text':  data.message
-    });
-    $('.flash').html(message);
+    updateFlash('success', data.message);
   });
 }
 
@@ -89,14 +87,12 @@ function handleNewCommentAjaxSuccessEvent(elem) {
     var commentableType = commentData.commentable_type.toLowerCase();
     var commentable     = $('#' + commentableType + '-' + commentData.commentable_id);
 
-    addCommentListItem(commentData);
+    var elem = findComment(commentData.id);
+    if (!elem.length) {
+      addCommentListItem(commentData);
+    }
     hideNewCommentForm(commentable);
-
-    var flash = $('<div>', {
-      'class': 'alert success',
-      'text':  data.message
-    });
-    $('.flash').html(flash);
+    updateFlash('success', data.message);
   });
 }
 
@@ -115,14 +111,7 @@ function handleEditCommentAjaxSuccessEvent(elem) {
 
     commentText.html(commentData.body);
     hideEditCommentForm(comment);
-
-    // Update flash
-    var message = $('<div>', {
-      'class': 'alert success',
-      'text':  data.message
-    });
-    $('.flash').html(message);
-
+    updateFlash('success', data.message);
   });
 }
 
@@ -131,7 +120,7 @@ function handleFormAjaxErrorEvent(elem, selector) {
     var detail   = event.detail;
     var messages = detail[0];
 
-    var errors = buildErrorsContainer(messages);
+    var errors = App.utils.render("common/errors", { messages: messages });
     var form = $(this);
     form.prepend(errors);
   });
@@ -163,126 +152,9 @@ function addCommentListItem(commentData) {
   var commentable     = $('#' + commentableType + '-' + commentData.commentable_id);
   var comments        = commentable.find('.comments-list');
   if (!comments.length) {
-    comments = $('<ul>', { 'class': '.comments-list' });
+    comments = $('<ul>', { 'class': 'comments-list' });
     commentable.find('.comments').html(comments);
   }
-  var commentListItem = buildCommentListItem(commentData);
+  var commentListItem = App.utils.render("comments/comment", commentData);
   comments.append(commentListItem);
-}
-
-function buildErrorsContainer(messages) {
-  $('#errors').remove();
-  var errorMessage = pluralize('error', messages.length, true) +
-                     ' prohibited this resource from being saved:';
-  var errors = $('<div>', {
-    'id':    'errors',
-    'class': 'alert',
-    'text':  errorMessage
-  });
-
-  var errorsList = $('<ul>');
-  messages.forEach(function(message) {
-    errorsList.append(
-      $('<li>', { 'text': message })
-    );
-  });
-  errors.append(errorsList);
-  return errors;
-}
-
-function buildCommentListItem(commentData) {
-  var listItem = $('<li>', {
-    'id': 'comment-' + commentData.id
-  });
-
-  var commentBody = $('<p>', {
-    'class': 'comment-body'
-  }).append(
-    $('<span>', {
-      'text': commentData.body
-    })
-  );
-
-  var form  = buildEditCommentForm(commentData);
-  var links = buildCommentItemLinks(commentData);
-
-  listItem.append(commentBody, form, links);
-  return listItem;
-}
-
-function buildEditCommentForm(commentData) {
-  var form = $('<form>', {
-    'class':  'edit-comment',
-    'action': '/comments/' + commentData.id,
-    'accept-charset': 'UTF-8',
-    'data-remote':    true,
-    'method': 'post',
-  });
-
-  var hiddenUTF = $('<input>', {
-    'name':  'utf8',
-    'type':  'hidden',
-    'value': '\u2713'
-  });
-
-  var csrfToken = App.utils.getCSRF();
-  var hiddenAuthenticityToken = $('<input>', {
-    'type':  'hidden',
-    'name':  'authenticity-token',
-    'value': csrfToken
-  });
-
-  var hiddenMethod = $('<input>', {
-    'type':  'hidden',
-    'name':  '_method',
-    'value': 'patch'
-  });
-
-  var bodyField = $('<div>', {
-    'class': 'field',
-  }).append(
-    $('<textarea>', {
-      'name':  'comment[body]',
-      'text':  commentData.body
-    })
-  );
-
-  var action = $('<div>', {
-    'class': 'actions'
-  }).append(
-    $('<input>', {
-      'type': 'submit',
-      'name': 'commit',
-      'value': 'Update Comment',
-      'data-disable-with': 'Update Comment'
-    })
-  );
-
-  form.append(hiddenUTF, hiddenMethod, hiddenAuthenticityToken, bodyField, action);
-  return form;
-}
-
-function buildCommentItemLinks(commentData) {
-  var links = $('<p>', {
-    'text': ' | '
-  });
-
-  var editLink = $('<a>', {
-    'class': 'edit-comment-link',
-    'text':  'Edit',
-    'data-comment-id': commentData.id,
-    'href':  ''
-  });
-
-  var deleteLink = $('<a>', {
-    'class': 'delete-comment-link',
-    'data-remote': 'true',
-    'rel':   'nofollow',
-    'text':  'Delete',
-    'data-method': 'delete',
-    'href':  '/comments/' + commentData.id
-  });
-
-  links.prepend(editLink).append(deleteLink);
-  return links;
 }
