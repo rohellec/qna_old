@@ -7,7 +7,7 @@ if (!answers.length) {
   answers = $('.answers tbody');
 }
 
-var answer = findAnswer('<% @answer.id %>');
+var answer = findAnswer('<%= @answer.id %>');
 if (!answer.length) {
   answers.append('<%= j render @answer %>');
 }
