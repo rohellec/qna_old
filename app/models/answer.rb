@@ -33,7 +33,7 @@ class Answer < ApplicationRecord
   protected
 
   def unique_acceptance
-    return unless accepted?
+    return if !accepted? || question.accepted_answer == self
     errors.add(:base, "Only one answer can be accepted") if question.accepted_answer.present?
   end
 end
