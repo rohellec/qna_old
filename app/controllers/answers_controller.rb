@@ -13,48 +13,34 @@ class AnswersController < ApplicationController
   def create
     @answer = @question.answers.build(answer_params)
     @answer.user = current_user
-    respond_to do |format|
-      if @answer.save
-        flash.now[:success] = "New answer has been successfully created"
-        format.js { render "create", layout: false }
-      else
-        format.js { render "error_messages", layout: false }
-      end
+    if @answer.save
+      render_json_with_message(@answer.as_json(include: :attachments))
+    else
+      render_errors
     end
   end
 
   def update
-    respond_to do |format|
-      if @answer.update(answer_params)
-        flash.now[:success] = "Answer has been successfully updated"
-        format.js { render "update", layout: false }
-      else
-        format.js { render "error_messages", layout: false }
-      end
+    if @answer.update(answer_params)
+      render_json_with_message(@answer.as_json(include: :attachments))
+    else
+      render_errors
     end
   end
 
   def destroy
     @answer.destroy
-    flash.now[:success] = "Answer has been successfully deleted"
-    respond_to do |format|
-      format.js { render "destroy", layout: false }
-    end
+    render_json_with_message
   end
 
   def accept
     @answer.accept
-    respond_to do |format|
-      format.js { render "accept", layout: false }
-    end
+    render json: @answer
   end
 
   def remove_accept
     @answer.remove_accept
-    @answers = @question.answers
-    respond_to do |format|
-      format.js { render "remove_accept", layout: false }
-    end
+    render json: @answer
   end
 
   private
@@ -65,7 +51,7 @@ class AnswersController < ApplicationController
 
   def publish_answer
     return if @answer.errors.any?
-    AnswersChannel.broadcast_to(@question, answer: @answer, attachments: @answer.attachments)
+    AnswersChannel.broadcast_to(@question, @answer.as_json(include: :attachments))
   end
 
   def set_answer

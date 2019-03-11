@@ -1,30 +1,22 @@
 $(document).on('turbolinks:load', function() {
-  $('.answers').on('click', '.edit-answer-link', function(e) {
-    e.preventDefault();
-
-    var current  = $(this);
-    var answerId = current.data('answerId');
-    var answer   = $('#answer-' + answerId);
-    var editForm = answer.find('.edit-answer');
-    var content  = answer.find('.answer-text');
-
-    toggleLink(current, 'Edit');
-    editForm.toggle();
-    content.toggle();
-  });
+  App.answers.eventsHandler.handleAnswerEvents();
 });
 
-function findAnswer(id) {
-  return $('#answer-' + id);
-}
+App.answers || (App.answers = {});
 
-function findOrCreateAnswersList() {
-  var answers     = $('.answers');
-  var answersList = answers.find('tbody');
+App.answers.eventsHandler = new AnswersEventsHandler();
+
+App.answers.findAnswer = function(id) {
+  return $('#answer-' + id);
+};
+
+App.answers.findOrCreateList = function () {
+  var answers = $('.answers');
+  var answersList = answers.find('.answers-table > tbody');
   if (!answersList.length) {
-    answers.html('<table><tbody></tbody></table>');
-    answersList = answers.find('tbody');
+    var emptyTable = App.utils.emptyTable('answers');
+    answers.find('.answers-placeholder').replaceWith(emptyTable);
+    answersList = answers.find('.answers-table > tbody');
   }
   return answersList;
 }
-

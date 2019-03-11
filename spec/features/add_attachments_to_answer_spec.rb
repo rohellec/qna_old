@@ -57,7 +57,7 @@ feature "Adding attachment to answer", %(
 
       background do
         visit question_path(question)
-        within ".answers" do
+        within ".answers-table" do
           click_on "Edit"
           add_attachment("test.png")
           click_on "Update Answer"
@@ -78,7 +78,7 @@ feature "Adding attachment to answer", %(
 
       background do
         visit question_path(question)
-        within ".answers" do
+        within ".answers-table" do
           click_on "Edit"
           add_attachment("test2.png")
           click_on "Update Answer"

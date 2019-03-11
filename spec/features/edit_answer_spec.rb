@@ -42,7 +42,7 @@ feature "Edit question", %(
             expect(page).to have_no_css "form.edit-answer"
           end
 
-          scenario "answer body becomes visible" do
+          scenario "answer content becomes visible" do
             within ".answers" do
               expect(page).to have_selector "p", text: user_answer.body
             end
