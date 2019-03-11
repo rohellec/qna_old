@@ -17,7 +17,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: valid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.to change(commentable.comments, :count).by(1)
         end
 
@@ -25,7 +25,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: valid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.to change(user.comments, :count).by(1)
         end
 
@@ -33,7 +33,7 @@ describe CommentsController do
           before do
             post :create, params: { question_id: commentable, comment: valid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end
 
           it "assigns the corresponded commentable" do
@@ -65,7 +65,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: invalid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.not_to change(commentable.comments, :count)
         end
 
@@ -73,7 +73,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: invalid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.not_to change(user.comments, :count)
         end
 
@@ -81,7 +81,7 @@ describe CommentsController do
           before do
             post :create, params: { question_id: commentable, comment: invalid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end
 
           it "assigns the corresponded commentable" do
@@ -130,7 +130,7 @@ describe CommentsController do
         context "with valid attributes" do
           before do
             patch :update, params: { id: user_comment, comment: valid_attributes },
-                           format: :js
+                           format: :json
           end
 
           it "assigns the requested comment" do
@@ -166,7 +166,7 @@ describe CommentsController do
         context "with invalid attributes" do
           before do
             patch :update, params: { id: user_comment, comment: invalid_attributes },
-                           format: :js
+                           format: :json
           end
 
           it "assigns the requested comment" do
@@ -222,7 +222,7 @@ describe CommentsController do
         it "deletes answer from db" do
           expect do
             delete :destroy, params: { id: user_comment, commentable: "questions" },
-                             format: :js
+                             format: :json
           end
           .to change(Comment, :count).by(-1)
         end
@@ -230,7 +230,7 @@ describe CommentsController do
         describe "request" do
           before do
             delete :destroy, params: { id: user_comment, commentable: "questions" },
-                             format: :js
+                             format: :json
           end
 
           it "assigns the requested comment" do

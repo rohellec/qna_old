@@ -1,5 +1,5 @@
-form[class="new-comment" action="/answers/#{@id}/comments" accept-charset="UTF-8"
-     data-remote="true" method="post"]
+form[class="new-comment" action="/#{@commentable_type}/#{@commentable_id}/comments"
+     accept-charset="UTF-8" data-remote="true" method="post"]
 
   input type="hidden" name="utf8" value="\u2713"
   input type="hidden" name="authenticity_token" value=App.utils.getCSRF()
