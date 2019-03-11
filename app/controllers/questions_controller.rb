@@ -14,8 +14,8 @@ class QuestionsController < ApplicationController
 
   def show
     @attachments = @question.attachments
-    @answers     = @question.answers
-    @answer      = Answer.new
+    @answers = @question.answers_by_rating
+    @answer = Answer.new
   end
 
   def new

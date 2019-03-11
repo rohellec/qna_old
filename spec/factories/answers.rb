@@ -10,6 +10,16 @@ FactoryBot.define do
       accepted { true }
     end
 
+    factory :answer_with_votes do
+      transient do
+        votes_count { 1 }
+      end
+
+      after(:create) do |answer, evaluator|
+        create_list(:up_vote, evaluator.votes_count, votable: answer)
+      end
+    end
+
     factory :answer_with_attachment do
       attachments_attributes { [attributes_for(:answer_attachment)] }
     end
