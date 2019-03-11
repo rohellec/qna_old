@@ -1,18 +1,20 @@
-div id="question-#{@question.id}" class="question #{'answered' if @question.answered?}"
-  h1.question-title
-    = @question.title
-
+div id="question-#{@question.id}" class="question #{"answered" if @question.answered?}"
   == render "votes/votes", votable: @question,
                            votable_type: "question"
+  .question-content
+    h1.question-title
+      = @question.title
 
-  .question-body
-    p = @question.body
+    p.question-text
+      = @question.body
+
     - if @question.attachments.any?
       .question-attachments
         p Attachments
         ul == render @question.attachments
 
-  == render "form", question: @question, local: false, css_class: "edit-question"
+  - if current_user&.author_of?(@question)
+    == render "form", question: @question, local: false, css_class: "edit-question"
 
   div
     = link_to "Back", questions_path
@@ -28,13 +30,12 @@ div id="question-#{@question.id}" class="question #{'answered' if @question.answ
 
 .answers
   - if @answers.any?
-    table
+    table.answers-table
       tbody
         == render @answers
   - else
-    p
+    p.answers-placeholder
       i Nobody has given any answer yet!
 
-
-- if user_signed_in?
-  == render "questions/new_answer", question: @question, answer: @answer
+  - if user_signed_in?
+    == render "questions/new_answer", question: @question, answer: @answer

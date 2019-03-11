@@ -2,11 +2,11 @@ h1 Questions
 
 .questions
   - if @questions.any?
-    table
+    table.questions-table
       tbody
         == render @questions
   - else
-    p
+    p.questions-placeholder
       i Nobody has asked anything yet!
 
 div

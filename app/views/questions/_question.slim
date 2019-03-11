@@ -1,4 +1,4 @@
-tr id="question-#{question.id}" class=("answered" if question.answered?)
+tr id="question-#{question.id}" class="question #{"answered" if question.answered?}"
   td
     = link_to question do
       div = question.title
@@ -6,4 +6,4 @@ tr id="question-#{question.id}" class=("answered" if question.answered?)
     - if current_user&.author_of?(question)
       => link_to "Edit", edit_question_path(question)
       | |
-      =< link_to "Delete", question, method: :delete, remote: true
+      =< link_to "Delete", question, class: "delete-question-link", method: :delete, remote: true

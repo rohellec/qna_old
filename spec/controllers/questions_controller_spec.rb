@@ -24,7 +24,7 @@ describe QuestionsController do
 
   describe "GET #show" do
     let(:question) { create(:question) }
-    let(:answers)  { create_pair(:answer, question: question) }
+    let!(:answers) { create_pair(:answer, question: question) }
 
     before { get :show, params: { id: question } }
 
@@ -188,9 +188,9 @@ describe QuestionsController do
           end
         end
 
-        context "with valid attributes using js" do
+        context "with valid attributes using json" do
           before do
-            patch :update, params: { id: user_question, question: valid_attributes }, format: :js
+            patch :update, params: { id: user_question, question: valid_attributes }, format: :json
           end
 
           it "updates question attributes" do
@@ -199,8 +199,12 @@ describe QuestionsController do
             expect(user_question.body).to  eq valid_attributes[:body]
           end
 
-          it "renders 'update.js' template" do
-            expect(response).to render_template "update"
+          it "responds with json" do
+            expect(response.content_type).to eq "application/json"
+          end
+
+          it "responds with :ok status" do
+            expect(response).to have_http_status :ok
           end
         end
 
@@ -220,9 +224,10 @@ describe QuestionsController do
           end
         end
 
-        context "with invalid attributes using js" do
+        context "with invalid attributes using json" do
           before do
-            patch :update, params: { id: user_question, question: invalid_attributes }, format: :js
+            patch :update, params: { id: user_question, question: invalid_attributes },
+                           format: :json
           end
 
           it "doesn't update question attributes" do
@@ -231,8 +236,12 @@ describe QuestionsController do
             expect(user_question.body).not_to  eq valid_attributes[:body]
           end
 
-          it "renders 'error_messages' template" do
-            expect(response).to render_template(:error_messages)
+          it "responds with json" do
+            expect(response.content_type).to eq "application/json"
+          end
+
+          it "responds with :forbidden status" do
+            expect(response).to have_http_status :forbidden
           end
         end
 
@@ -303,10 +312,17 @@ describe QuestionsController do
           end
         end
 
-        context "with AJAX request" do
-          it "redirects to 'index'" do
-            delete :destroy, params: { id: user_question }, format: :js
-            expect(response).to render_template("destroy")
+        context "with XHR request" do
+          before do
+            delete :destroy, params: { id: user_question }, format: :json
+          end
+
+          it "responds with json" do
+            expect(response.content_type).to eq "application/json"
+          end
+
+          it "responds with :ok status" do
+            expect(response).to have_http_status :ok
           end
         end
       end

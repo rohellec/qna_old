@@ -7,7 +7,7 @@ feature "Update question", %(
 ) do
 
   given(:user) { create(:confirmed_user) }
-  given!(:user_question)  { create(:question, user: user) }
+  given!(:user_question) { create(:question, user: user) }
 
   describe "from question page", js: true do
     background do
@@ -18,12 +18,13 @@ feature "Update question", %(
 
     context "with empty mandatory fields" do
       background do
-        fill_in :question_title, with: ""
-        fill_in :question_body,  with: ""
+        fill_in "question[title]", with: ""
+        fill_in "question[body]",  with: ""
         click_on "Update"
       end
 
       scenario "'Edit Question' page is rendered with errors" do
+        find("#errors")
         expect(page).to have_content "Body can't be blank"
       end
 
@@ -41,8 +42,8 @@ feature "Update question", %(
 
     context "with new content" do
       background do
-        fill_in :question_title, with: "Updated title"
-        fill_in :question_body,  with: "Updated body"
+        fill_in "question[title]", with: "Updated title"
+        fill_in "question[body]",  with: "Updated body"
         click_on "Update"
       end
 
@@ -58,7 +59,7 @@ feature "Update question", %(
         # 'find' causes capybara to wait until '.question-body' div is shown on the page
         # which means that js execution is finished.
         # Without 'find' capybara won't wait, and content on index page isn't updated
-        find(".question-body")
+        find(".question-content")
         visit questions_path
         within ".questions" do
           expect(page).to have_content "Updated title"
@@ -76,8 +77,8 @@ feature "Update question", %(
 
     context "with empty mandatory fields" do
       background do
-        fill_in :question_title, with: ""
-        fill_in :question_body,  with: ""
+        fill_in "question[title]", with: ""
+        fill_in "question[body]",  with: ""
         click_on "Update"
       end
 
@@ -95,8 +96,8 @@ feature "Update question", %(
 
     context "with new content" do
       background do
-        fill_in :question_title, with: "Updated title"
-        fill_in :question_body,  with: "Updated body"
+        fill_in "question[title]", with: "Updated title"
+        fill_in "question[body]",  with: "Updated body"
         click_on "Update"
       end
 

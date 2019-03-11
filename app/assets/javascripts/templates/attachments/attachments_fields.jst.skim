@@ -1,0 +1,9 @@
+.attachments_fields
+  p Attachments
+  - for attachment, index in @attachments
+    == App.utils.render "attachments/attachment_fields", attachment: attachment, attachable: @attachable, index: index
+
+  div
+    a[class="add_fields" data-association="attachment" data-associations="attachments"
+      data-association-insertion-template=App.utils.render('attachments/new_attachment', attachable: @attachable)
+      href="#"] Add Attachment

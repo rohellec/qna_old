@@ -1,12 +1,15 @@
-.nested_fields
+.nested-fields
   .field
-    label for="answer_attachments_attributes_#{@index}_file"
-      = @attachment.file
-    input[type="file" id="answer_attachments_attributes_#{@index}_file"
-          name="answer[attachments_attributes][#{@index}][file]"]
+    label for="#{@attachable}_attachments_attributes_#{@index}_file"
+      = App.utils.filename(@attachment.file.url)
+    input[type="file" id="#{@attachable}_attachments_attributes_#{@index}_file"
+          name="#{@attachable}[attachments_attributes][#{@index}][file]"]
 
-  a data-attachment-id="#{attachment.id}" class="remove_fields existing" href="#"
+  input[type="hidden" value='false' name="#{@attachable}[attachments_attributes][#{@index}][_destroy]"
+        id="#{@attachable}_attachments_attributes_#{@index}__destroy"]
+
+  a data-attachment-id=@attachment.id class="remove_fields existing" href="#"
     | Remove Attachment
 
-  input[type="hidden" value="#{attachment.id}" name="answer[attachments_attributes][#{@index}][id]"
-        id="answer_attachments_attributes_#{@index}_id"]
+input[type="hidden" value=@attachment.id name="#{@attachable}[attachments_attributes][#{@index}][id]"
+      id="#{@attachable}_attachments_attributes_#{@index}_id"]

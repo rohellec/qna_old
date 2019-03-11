@@ -1,2 +1,2 @@
-li id="attachment-#{@id}"
-  a href="/uploads/attachment/file/#{@id}/#{@file}" =@file
+li id="attachment-#{@id}" class="attachment"
+  a href=@file.url = App.utils.filename(@file.url)

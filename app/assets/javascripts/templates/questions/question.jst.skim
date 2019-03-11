@@ -1,4 +1,4 @@
-tr id="question-#{@id}"
+tr.question id="question-#{@id}"
   td
     a href="questions/#{@id}"
       div = @title
@@ -6,4 +6,4 @@ tr id="question-#{@id}"
     - if @user_id == gon.user_id
       a href="questions/#{@id}/edit" Edit
       | |
-      a href="questions/#{@id}" data-method="delete" data-remote="true" Delete
+      a class="delete-question-link" href="questions/#{@id}" data-method="delete" data-remote="true" Delete

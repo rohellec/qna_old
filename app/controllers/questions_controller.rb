@@ -38,31 +38,24 @@ class QuestionsController < ApplicationController
   def update
     respond_to do |format|
       if @question.update(question_params)
+        format.json { render_json_with_message(@question.as_json(include: :attachments)) }
         format.html do
           flash[:success] = t(".message")
           redirect_to @question
         end
-        format.js do
-          flash.now[:success] = t(".message")
-          render "update", layout: false
-        end
       else
+        format.json { render_errors }
         format.html { render :edit }
-        format.js   { render "error_messages", layout: false }
       end
     end
   end
 
   def destroy
     @question.destroy
-    message = t(".message")
     respond_to do |format|
-      format.js do
-        flash.now[:success] = message
-        render "destroy", layout: false
-      end
+      format.json { render_json_with_message }
       format.html do
-        flash[:success] = message
+        flash[:success] = t(".message")
         redirect_to questions_path
       end
     end
@@ -81,7 +74,7 @@ class QuestionsController < ApplicationController
 
   def publish_question
     return if @question.errors.any?
-    ActionCable.server.broadcast('questions', @question)
+    ActionCable.server.broadcast('questions', @question.as_json(include: :attachments))
   end
 
   def set_question
