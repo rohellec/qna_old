@@ -16,48 +16,6 @@
 //= require action_cable
 //= require cocoon
 //= require pluralize
+//= require app_namespace
 //= require_tree .
 //= require_self
-
-App.utils = {}
-App.utils.render = function(template, options) {
-  var path = 'templates/' + template;
-  return JST[path](options);
-}
-
-App.utils.getCSRF = function() {
-  return $('meta[name="csrf-token"]').attr('content');
-}
-
-$(document).on('turbolinks:load cocoon:after-insert', function() {
-  $('.nested-fields').change(function() {
-    var current = $(this);
-    var input = current.find('input');
-    var label = current.find('label');
-    var name  = basename(input.val());
-    label.text(name);
-  });
-});
-
-function basename(filename) {
-  return filename.replace(/\\/g, '/')
-                 .replace(/(^.*\/)|(\.\w*$)/g, '');
-}
-
-function toggleLink(link, name) {
-  if (link.hasClass('cancel')) {
-    link.removeClass('cancel');
-    link.text(name);
-  } else {
-    link.addClass('cancel');
-    link.text('Cancel');
-  }
-}
-
-function updateFlash(status, text) {
-  var message = $('<div>', {
-    'class': 'alert ' + status,
-    'text':  text
-  });
-  $('.flash').html(message);
-}
