@@ -1,0 +1,3 @@
+  a[href="/#{@votable}/#{@votable_id}/#{@type}_vote" class="vote #{@type}-vote"
+    data-method="post" data-remote="true"]
+    ="#{@type} vote"

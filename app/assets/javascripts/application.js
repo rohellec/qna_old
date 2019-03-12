@@ -18,6 +18,7 @@
 //= require pluralize
 //= require app_namespace
 //= require resource_events_handler
+//= require vote_events_mixin
 //= require answers_events_handler
 //= require_tree .
 //= require_self

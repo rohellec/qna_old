@@ -14,6 +14,10 @@ function AnswersEventsHandler() {
 AnswersEventsHandler.prototype = Object.create(ResourceEventsHandler.prototype);
 AnswersEventsHandler.prototype.constructor = AnswersEventsHandler;
 
+for (var key in voteEventsMixin) {
+  AnswersEventsHandler.prototype[key] = voteEventsMixin[key];
+}
+
 AnswersEventsHandler.prototype.handleAnswerEvents = function() {
   this
     .handleEditFormToggleEvent()

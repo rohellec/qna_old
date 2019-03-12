@@ -1,0 +1,3 @@
+a[href="/#{@votable}/#{@votable_id}/delete_vote" class="vote #{@type}-voted"
+  data-method="post" data-remote="true"]
+  | delete vote

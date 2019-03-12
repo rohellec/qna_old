@@ -14,6 +14,10 @@ App.questions.eventsHandler = new ResourceEventsHandler({
   placeholder: 'Nobody has asked anything yet!'
 });
 
+for (var key in voteEventsMixin) {
+  App.questions.eventsHandler[key] = voteEventsMixin[key];
+}
+
 App.questions.findQuestion = function(id) {
   return $('#question-' + id);
 }
