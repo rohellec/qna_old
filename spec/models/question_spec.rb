@@ -50,6 +50,39 @@ describe Question do
     end
   end
 
+  describe "#answers_by_rating" do
+    before do
+      (1..5).each { |count| create(:answer_with_votes, votes_count: count, question: question) }
+    end
+
+    context "when there is no accepted answer" do
+      it "ordered by :vote_rating" do
+        answers_by_rating = question.answers_by_rating
+        answers_by_rating.each_with_index do |answer, i|
+          unless answer.equal? answers_by_rating.last
+            expect(answer.vote_rating).to be > answers_by_rating[i + 1].vote_rating
+          end
+        end
+      end
+
+      it "ordered by :created_at when :vote_rating is equal" do
+        (1..5).each { |count| create(:answer_with_votes, votes_count: count, question: question) }
+        answers_by_rating = question.answers_by_rating
+        (0..9).step(2) do |i|
+          expect(answers_by_rating[i].created_at).to be < answers_by_rating[i + 1].created_at
+        end
+      end
+    end
+
+    context "when there is an accepted answer" do
+      before { answer.accept }
+
+      it "ordered by :accepted" do
+        expect(question.answers_by_rating.first).to eq answer
+      end
+    end
+  end
+
   describe "#accepted_answer" do
     it "returns accepted answer" do
       answer.accept

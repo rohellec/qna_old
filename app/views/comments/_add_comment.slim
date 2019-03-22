@@ -1,6 +1,0 @@
-.add-comment
-  - if user_signed_in?
-    = link_to "Add comment", "", class: "new-comment-link",
-                                 data: { commentable_id:   commentable.id,
-                                         commentable_type: commentable.class.to_s.underscore }
-    == render "comments/new_comment", commentable: commentable

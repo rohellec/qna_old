@@ -1,0 +1,17 @@
+en:
+  flash:
+    actions:
+      create:
+        success: 'New %{downcase_resource_name} has been successfully created.'
+      update:
+        success: '%{resource_name} has been successfully updated.'
+      destroy:
+        success: '%{resource_name} has been successfully deleted.'
+    comments:
+      create:
+        success: "Your comment has been successfully created"
+      update:
+        success: "Your comment has been successfully updated"
+      destroy:
+        success: "Your comment has been successfully deleted"
+

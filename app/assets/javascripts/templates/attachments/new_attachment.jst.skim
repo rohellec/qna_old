@@ -1,0 +1,10 @@
+.nested-fields
+  .field
+    label for="#{@attachable}_attachments_attributes_new_attachments_file"
+      | File
+    input[type="file" id="#{@attachable}_attachments_attributes_new_attachments_file"
+          name="#{@attachable}[attachments_attributes][new_attachments][file]"]
+
+  input[type="hidden" value='false' name="#{@attachable}[attachments_attributes][new_attachments][_destroy]"
+        id="#{@attachable}_attachments_attributes_new_attachments__destroy"]
+  a class="remove_fields dynamic" href="#" Remove Attachment

@@ -10,51 +10,30 @@ class AnswersController < ApplicationController
 
   after_action :publish_answer, only: :create
 
+  respond_to :json
+
   def create
-    @answer = @question.answers.build(answer_params)
-    @answer.user = current_user
-    respond_to do |format|
-      if @answer.save
-        flash.now[:success] = "New answer has been successfully created"
-        format.js { render "create", layout: false }
-      else
-        format.js { render "error_messages", layout: false }
-      end
-    end
+    @answer = @question.answers.create(answer_params.merge!(user: current_user))
+    respond_with(@answer, include: :attachments)
   end
 
   def update
-    respond_to do |format|
-      if @answer.update(answer_params)
-        flash.now[:success] = "Answer has been successfully updated"
-        format.js { render "update", layout: false }
-      else
-        format.js { render "error_messages", layout: false }
-      end
-    end
+    @answer.update(answer_params)
+    respond_with(@answer, include: :attachments)
   end
 
   def destroy
-    @answer.destroy
-    flash.now[:success] = "Answer has been successfully deleted"
-    respond_to do |format|
-      format.js { render "destroy", layout: false }
-    end
+    respond_with(@answer.destroy)
   end
 
   def accept
     @answer.accept
-    respond_to do |format|
-      format.js { render "accept", layout: false }
-    end
+    render json: @answer
   end
 
   def remove_accept
     @answer.remove_accept
-    @answers = @question.answers
-    respond_to do |format|
-      format.js { render "remove_accept", layout: false }
-    end
+    render json: @answer
   end
 
   private
@@ -65,7 +44,7 @@ class AnswersController < ApplicationController
 
   def publish_answer
     return if @answer.errors.any?
-    AnswersChannel.broadcast_to(@question, answer: @answer, attachments: @answer.attachments)
+    AnswersChannel.broadcast_to(@question, @answer.as_json(include: :attachments))
   end
 
   def set_answer
@@ -78,6 +57,5 @@ class AnswersController < ApplicationController
 
   def set_question
     @question = Question.find(params[:question_id])
-    @answers  = @question.answers
   end
 end

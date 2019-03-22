@@ -19,35 +19,48 @@ describe AnswersController do
       context "with valid attributes" do
         it "creates new answer for question" do
           expect do
-            post :create, params: { question_id: question, answer: valid_attributes }, format: :js
+            post :create, params: { question_id: question, answer: valid_attributes }, format: :json
           end
           .to change(question.answers, :count).by(1)
         end
 
         it "creates new answer for user" do
           expect do
-            post :create, params: { question_id: question, answer: valid_attributes }, format: :js
+            post :create, params: { question_id: question, answer: valid_attributes }, format: :json
           end
           .to change(user.answers, :count).by(1)
         end
 
-        it "renders 'create.js' template" do
-          post :create, params: { question_id: question, answer: valid_attributes }, format: :js
-          expect(response).to render_template "create"
+        it "responds with json" do
+          post :create, params: { question_id: question, answer: valid_attributes }, format: :json
+          expect(response.content_type).to eq "application/json"
+        end
+
+        it "responds with :created status" do
+          post :create, params: { question_id: question, answer: valid_attributes }, format: :json
+          expect(response).to have_http_status :created
         end
       end
 
       context "with invalid attributes" do
         it "doesn't save new answer to db" do
           expect do
-            post :create, params: { question_id: question, answer: invalid_attributes }, format: :js
+            post :create, params: { question_id: question, answer: invalid_attributes },
+                          format: :json
           end
           .not_to change(Answer, :count)
         end
 
-        it "renders 'error_messages.js' template" do
-          post :create, params: { question_id: question, answer: invalid_attributes }, format: :js
-          expect(response).to render_template "error_messages"
+        it "responds with json" do
+          post :create, params: { question_id: question, answer: invalid_attributes },
+                        format: :json
+          expect(response.content_type).to eq "application/json"
+        end
+
+        it "responds with :unprocessable_entity status" do
+          post :create, params: { question_id: question, answer: invalid_attributes },
+                        format: :json
+          expect(response).to have_http_status :unprocessable_entity
         end
       end
 
@@ -56,7 +69,7 @@ describe AnswersController do
 
         it "creates new answer attachment" do
           expect do
-            post :create, params: { question_id: question, answer: attributes }, format: :js
+            post :create, params: { question_id: question, answer: attributes }, format: :json
           end.to change(Attachment, :count).by(1)
         end
       end
@@ -88,11 +101,7 @@ describe AnswersController do
       context "when author" do
         context "with valid attributes" do
           before do
-            patch :update, params: { id: user_answer, answer: valid_attributes }, format: :js
-          end
-
-          it "assigns the requested answer" do
-            expect(assigns(:answer)).to eq user_answer
+            patch :update, params: { id: user_answer, answer: valid_attributes }, format: :json
           end
 
           it "changes answer body" do
@@ -100,14 +109,18 @@ describe AnswersController do
             expect(user_answer.body).to eq valid_attributes[:body]
           end
 
-          it "renders 'update.js' template" do
-            expect(response).to render_template :update
+          it "responds with json" do
+            expect(response.content_type).to eq "application/json"
+          end
+
+          it "responds with :ok status" do
+            expect(response).to have_http_status :ok
           end
         end
 
         context "with invalid attributes" do
           before do
-            patch :update, params: { id: user_answer, answer: invalid_attributes }, format: :js
+            patch :update, params: { id: user_answer, answer: invalid_attributes }, format: :json
           end
 
           it "doesn't update answer body" do
@@ -115,8 +128,12 @@ describe AnswersController do
             expect(user_answer).not_to eq valid_attributes[:body]
           end
 
-          it "renders 'error_messages' template" do
-            expect(response).to render_template :error_messages
+          it "responds with json" do
+            expect(response.content_type).to eq "application/json"
+          end
+
+          it "responds with :unprocessable_entity status" do
+            expect(response).to have_http_status :unprocessable_entity
           end
         end
 
@@ -134,7 +151,7 @@ describe AnswersController do
           end
 
           before do
-            patch :update, params: { id: user_answer, answer: attributes }, format: :js
+            patch :update, params: { id: user_answer, answer: attributes }, format: :json
           end
 
           it "updates attachment attributes" do
@@ -169,21 +186,21 @@ describe AnswersController do
       context "when author" do
         let!(:user_answer)  { create(:answer, question: question, user: user) }
 
-        it "assigns the requested answer" do
-          delete :destroy, params: { id: user_answer }, format: :js
-          expect(assigns(:answer)).to eq user_answer
-        end
-
         it "deletes answer from db" do
           expect do
-            delete :destroy, params: { id: user_answer }, format: :js
+            delete :destroy, params: { id: user_answer }, format: :json
           end
           .to change(Answer, :count).by(-1)
         end
 
-        it "renders 'destroy.js' template" do
-          delete :destroy, params: { id: user_answer }, format: :js
-          expect(response).to render_template :destroy
+        it "responds with json" do
+          delete :destroy, params: { id: user_answer }, format: :json
+          expect(response.content_type).to eq "application/json"
+        end
+
+        it "responds with :ok status" do
+          delete :destroy, params: { id: user_answer }, format: :json
+          expect(response).to have_http_status(:ok)
         end
       end
 
@@ -227,26 +244,22 @@ describe AnswersController do
       before { sign_in user }
 
       context "when question's author" do
-        before { post :accept, params: { id: answer }, format: :js }
-
-        it "assigns the requested answer" do
-          expect(assigns(:answer)).to eq answer
-        end
+        before { post :accept, params: { id: answer }, format: :json }
 
         it "sets answer's :accepted attribute to true" do
           answer.reload
           expect(answer).to be_accepted
         end
 
-        it "renders 'accept.js' template" do
-          expect(response).to render_template :accept
+        it "responds with json" do
+          expect(response.content_type).to eq "application/json"
         end
       end
 
       context "when is not question's author" do
         let(:answer) { create(:answer, question: question) }
 
-        before { post :accept, params: { id: answer }, format: :js }
+        before { post :accept, params: { id: answer }, format: :json }
 
         it "doesn't set answer's :accepted attribute to true" do
           expect(answer).not_to be_accepted
@@ -279,26 +292,22 @@ describe AnswersController do
       before { sign_in user }
 
       context "when question's author" do
-        before { post :remove_accept, params: { id: answer }, format: :js }
-
-        it "assigns the requested answer" do
-          expect(assigns(:answer)).to eq answer
-        end
+        before { post :remove_accept, params: { id: answer }, format: :json }
 
         it "sets accepted answer's :accepted attribute to false" do
           answer.reload
           expect(answer).not_to be_accepted
         end
 
-        it "renders 'remove_accept.js' template" do
-          expect(response).to render_template :remove_accept
+        it "responds with json" do
+          expect(response.content_type).to eq "application/json"
         end
       end
 
       context "when is not question's author" do
         let(:answer) { create(:accepted_answer, question: question) }
 
-        before { post :accept, params: { id: answer }, format: :js }
+        before { post :accept, params: { id: answer }, format: :json }
 
         it "doesn't set accepted answer's :accepted attribute to false" do
           expect(answer).to be_accepted

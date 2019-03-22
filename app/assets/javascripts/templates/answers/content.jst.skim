@@ -1,0 +1,7 @@
+.answer-content
+  p.answer-text = @body
+
+  - if @attachments.length != 0
+    .answer-attachments
+      p Attachments
+      ul == App.utils.render "attachments/attachments", attachments: @attachments

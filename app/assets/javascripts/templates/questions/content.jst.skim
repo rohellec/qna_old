@@ -1,0 +1,10 @@
+.question-content
+  h1.question-title
+    = @title
+
+  p.question-text
+    = @body
+  - if @attachments.length != 0
+    .question-attachments
+      p Attachments
+      ul == App.utils.render "attachments/attachments", attachments: @attachments

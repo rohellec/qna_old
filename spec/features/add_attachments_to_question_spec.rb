@@ -14,8 +14,8 @@ feature "Adding attachment to question", %(
   describe "Creating new question with empty attachment", js: true do
     background do
       visit new_question_path
-      fill_in :question_title, with: question_attributes[:title]
-      fill_in :question_body,  with: question_attributes[:body]
+      fill_in "question[title]", with: question_attributes[:title]
+      fill_in "question[body]",  with: question_attributes[:body]
       click_on "Add Attachment"
       click_on "Create Question"
     end
@@ -29,8 +29,8 @@ feature "Adding attachment to question", %(
   describe "Creating new question with several attachments", js: true do
     background do
       visit new_question_path
-      fill_in :question_title, with: question_attributes[:title]
-      fill_in :question_body,  with: question_attributes[:body]
+      fill_in "question[title]", with: question_attributes[:title]
+      fill_in "question[body]",  with: question_attributes[:body]
       add_attachment("test.png")
       add_attachment("test2.png")
       click_on "Create Question"

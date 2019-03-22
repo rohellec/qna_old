@@ -8,14 +8,16 @@ class QuestionsController < ApplicationController
 
   after_action  :publish_question, only: :create
 
+  respond_to :json, only: [:update, :destroy]
+  respond_to :html
+
   def index
-    @questions = Question.all
+    respond_with(@questions = Question.all)
   end
 
   def show
-    @attachments = @question.attachments
-    @answers     = @question.answers
-    @answer      = Answer.new
+    @answers = @question.answers_by_rating
+    respond_with(@question)
   end
 
   def new
@@ -26,46 +28,16 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = Question.new(question_params)
-    @question.user = current_user
-    if @question.save
-      redirect_to @question, flash: { success: t(".message") }
-    else
-      render :new
-    end
+    respond_with(@question = current_user.questions.create(question_params))
   end
 
   def update
-    respond_to do |format|
-      if @question.update(question_params)
-        format.html do
-          flash[:success] = t(".message")
-          redirect_to @question
-        end
-        format.js do
-          flash.now[:success] = t(".message")
-          render "update", layout: false
-        end
-      else
-        format.html { render :edit }
-        format.js   { render "error_messages", layout: false }
-      end
-    end
+    @question.update(question_params)
+    respond_with(@question, include: :attachments)
   end
 
   def destroy
-    @question.destroy
-    message = t(".message")
-    respond_to do |format|
-      format.js do
-        flash.now[:success] = message
-        render "destroy", layout: false
-      end
-      format.html do
-        flash[:success] = message
-        redirect_to questions_path
-      end
-    end
+    respond_with(@question.destroy)
   end
 
   private
@@ -81,7 +53,7 @@ class QuestionsController < ApplicationController
 
   def publish_question
     return if @question.errors.any?
-    ActionCable.server.broadcast('questions', @question)
+    ActionCable.server.broadcast('questions', @question.as_json(include: :attachments))
   end
 
   def set_question

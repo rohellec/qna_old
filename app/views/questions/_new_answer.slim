@@ -1,7 +1,8 @@
 div
   h2 New Answer
 
-  = form_with model: answer, url: question_answers_path(question), class: "new-answer" do |form|
+  = form_with model: Answer.new, url: question_answers_path(question),
+              class: "new-answer" do |form|
     div.field
       = form.label :body
       = form.text_area :body, id: :answer_body

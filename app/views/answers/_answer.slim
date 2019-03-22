@@ -1,5 +1,6 @@
 - if answer.persisted?
-  tr id="answer-#{answer.id}" class=("accepted" if answer.accepted?)
+  tr[id="answer-#{answer.id}" class="answer #{'accepted' if answer.accepted?}"
+     data-created-at=answer.created_at]
 
     td == render "votes/votes", votable: answer, votable_type: "answer"
 
@@ -11,21 +12,20 @@
                   class: "accept-answer-link", method: :post, remote: true
 
     td.answer-body
-      p.answer-text
-        = answer.body
-      - if answer.attachments.any?
-        div.answer-attachments
-          p Attachments
-          ul == render answer.attachments
+      .answer-content
+        p.answer-text = answer.body
+        - if answer.attachments.any?
+          div.answer-attachments
+            p Attachments
+            ul == render answer.attachments
 
       - if current_user&.author_of?(answer)
         == render "answers/form", answer: answer, css_class: "edit-answer"
 
-      == render "comments/comments",    commentable: answer
-      == render "comments/add_comment", commentable: answer
+      == render "comments/comments", commentable: answer
 
     td
       - if current_user&.author_of?(answer)
         => link_to "Edit", "", class: "edit-answer-link", data: { answer_id: answer.id }
         | |
-        =< link_to "Delete", answer, method: :delete, remote: true
+        =< link_to "Delete", answer, class: "delete-answer-link", method: :delete, remote: true

@@ -1,6 +1,6 @@
-li id="comment-#{@id}"
-  p.comment-body
-    span = @body
+li id="comment-#{@id}" class="comment"
+  .comment-body
+    == App.utils.render "comments/content", @
 
   - if gon.user_id == @user_id
     == App.utils.render "comments/form", @

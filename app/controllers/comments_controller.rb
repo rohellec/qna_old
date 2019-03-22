@@ -11,27 +11,20 @@ class CommentsController < ApplicationController
 
   after_action :publish_comment, only: :create
 
+  respond_to :json
+
   def create
-    @comment = @commentable.comments.build(comment_params)
-    @comment.user = current_user
-    if @comment.save
-      render_json_with_message
-    else
-      render_errors
-    end
+    @comment = @commentable.comments.create(comment_params.merge!(user: current_user))
+    respond_with(@comment)
   end
 
   def update
-    if @comment.update(comment_params)
-      render_json_with_message
-    else
-      render_errors
-    end
+    @comment.update(comment_params)
+    respond_with(@comment)
   end
 
   def destroy
-    @comment.destroy
-    render_json_with_message
+    respond_with(@comment.destroy)
   end
 
   private

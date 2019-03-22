@@ -17,6 +17,16 @@ class Question < ApplicationRecord
     answers.accepted.take
   end
 
+  # stable sort of answers by vote rating
+  def answers_by_rating
+    n = 0
+    answers.sort_by do |answer|
+      n += 1
+      sorting_criteria = answer.accepted ? 0 : 1
+      [sorting_criteria, -answer.vote_rating, n]
+    end
+  end
+
   private
 
   def question_answered

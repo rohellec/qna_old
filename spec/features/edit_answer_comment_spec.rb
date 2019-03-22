@@ -26,6 +26,7 @@ feature "Edit comment", %(
 
         scenario "'Edit comment' form becomes visible" do
           expect(page).to have_css "form.edit-comment"
+          expect(page).to have_no_css ".comment-content"
         end
 
         scenario "'Cancel' link becomes visible" do
@@ -42,9 +43,9 @@ feature "Edit comment", %(
             expect(page).to have_no_css "form.edit-comment"
           end
 
-          scenario "comment's body becomes visible" do
+          scenario "comment's content becomes visible" do
             within ".answers .comments" do
-              expect(page).to have_selector ".comment-body", text: "Comment text"
+              expect(page).to have_selector ".comment-content", text: "Comment text"
             end
           end
 

@@ -1,0 +1,18 @@
+form[class="edit-question" enctype="multipart/form-data" action="/questions/#{@id}"
+     accept-charset="UTF-8" data-remote="true" method="post"]
+
+  input type="hidden" name="utf8" value="\u2713"
+  input type="hidden" name="_method" value="patch"
+  input type="hidden" name="authenticity_token" value=App.utils.getCSRF()
+
+  .field
+    label for="question[title]" Title
+    input type="text" value=@title name="question[title]"
+  .field
+    label for="question[body]" Body
+    textarea name="question[body]" = @body
+
+  == App.utils.render "attachments/attachments_fields", attachments: @attachments, attachable: "question"
+
+  .actions
+    input type="submit" name="commit" value="Update Question" data-disable-with="Update Question"

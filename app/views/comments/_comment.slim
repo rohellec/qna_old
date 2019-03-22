@@ -1,13 +1,14 @@
 - if comment.persisted?
-  li id="comment-#{comment.id}"
-    p class="comment-body"
-      span = comment.body
+  li id="comment-#{comment.id}" class="comment"
+    .comment-body
+      .comment-content
+        p.comment-text = comment.body
 
     - if current_user&.author_of?(comment)
       = render "comments/form", comment: comment
 
     - if current_user&.author_of?(comment)
-      p
+      div
         => link_to "Edit", "", class: "edit-comment-link", data: { comment_id: comment.id }
         | |
         =< link_to "Delete", comment, class: "delete-comment-link", method: :delete, remote: true

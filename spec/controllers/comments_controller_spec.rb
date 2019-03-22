@@ -17,7 +17,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: valid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.to change(commentable.comments, :count).by(1)
         end
 
@@ -25,7 +25,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: valid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.to change(user.comments, :count).by(1)
         end
 
@@ -33,15 +33,11 @@ describe CommentsController do
           before do
             post :create, params: { question_id: commentable, comment: valid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end
 
-          it "assigns the corresponded commentable" do
-            expect(assigns(:commentable)).to eq commentable
-          end
-
-          it "response has :success http status" do
-            expect(response).to have_http_status(:success)
+          it "response has :created http status" do
+            expect(response).to have_http_status(:created)
           end
 
           it "response has 'application/json' content type" do
@@ -54,7 +50,7 @@ describe CommentsController do
 
           it "response body contains message" do
             expect(response.body).to match(
-              "\"message\":\"#{I18n.translate("comments.create.message")}\""
+              "\"message\":\"#{I18n.translate("flash.comments.create.success")}\""
             )
           end
         end
@@ -65,7 +61,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: invalid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.not_to change(commentable.comments, :count)
         end
 
@@ -73,7 +69,7 @@ describe CommentsController do
           expect do
             post :create, params: { question_id: commentable, comment: invalid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end.not_to change(user.comments, :count)
         end
 
@@ -81,15 +77,11 @@ describe CommentsController do
           before do
             post :create, params: { question_id: commentable, comment: invalid_attributes,
                                     commentable: "questions" },
-                          format: :js
+                          format: :json
           end
 
-          it "assigns the corresponded commentable" do
-            expect(assigns(:commentable)).to eq commentable
-          end
-
-          it "response has :forbidden http status" do
-            expect(response).to have_http_status(:forbidden)
+          it "response has :unprocessable_entity http status" do
+            expect(response).to have_http_status(:unprocessable_entity)
           end
 
           it "response has 'application/json' content type" do
@@ -130,11 +122,7 @@ describe CommentsController do
         context "with valid attributes" do
           before do
             patch :update, params: { id: user_comment, comment: valid_attributes },
-                           format: :js
-          end
-
-          it "assigns the requested comment" do
-            expect(assigns(:comment)).to eq user_comment
+                           format: :json
           end
 
           it "changes answer body" do
@@ -143,8 +131,8 @@ describe CommentsController do
           end
 
           describe "response" do
-            it "has :success http status" do
-              expect(response).to have_http_status(:success)
+            it "has :ok http status" do
+              expect(response).to have_http_status(:ok)
             end
 
             it "has 'application/json' content type" do
@@ -157,7 +145,7 @@ describe CommentsController do
 
             it "body contains message" do
               expect(response.body).to match(
-                "\"message\":\"#{I18n.translate("comments.update.message")}\""
+                "\"message\":\"#{I18n.translate("flash.comments.update.success")}\""
               )
             end
           end
@@ -166,11 +154,7 @@ describe CommentsController do
         context "with invalid attributes" do
           before do
             patch :update, params: { id: user_comment, comment: invalid_attributes },
-                           format: :js
-          end
-
-          it "assigns the requested comment" do
-            expect(assigns(:comment)).to eq user_comment
+                           format: :json
           end
 
           it "doesn't update answer body" do
@@ -179,8 +163,8 @@ describe CommentsController do
           end
 
           describe "response" do
-            it "has :forbidden http status" do
-              expect(response).to have_http_status(:forbidden)
+            it "has :unprocessable_entity http status" do
+              expect(response).to have_http_status(:unprocessable_entity)
             end
 
             it "has 'application/json' content type" do
@@ -222,7 +206,7 @@ describe CommentsController do
         it "deletes answer from db" do
           expect do
             delete :destroy, params: { id: user_comment, commentable: "questions" },
-                             format: :js
+                             format: :json
           end
           .to change(Comment, :count).by(-1)
         end
@@ -230,15 +214,11 @@ describe CommentsController do
         describe "request" do
           before do
             delete :destroy, params: { id: user_comment, commentable: "questions" },
-                             format: :js
+                             format: :json
           end
 
-          it "assigns the requested comment" do
-            expect(assigns(:comment)).to eq user_comment
-          end
-
-          it "response has :success http status" do
-            expect(response).to have_http_status(:success)
+          it "response has :ok http status" do
+            expect(response).to have_http_status(:ok)
           end
 
           it "response has 'application/json' content type" do
@@ -251,7 +231,7 @@ describe CommentsController do
 
           it "response body contains message" do
             expect(response.body).to match(
-              "\"message\":\"#{I18n.translate("comments.destroy.message")}\""
+              "\"message\":\"#{I18n.translate("flash.comments.destroy.success")}\""
             )
           end
         end

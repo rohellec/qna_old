@@ -1,23 +1,34 @@
 $(document).on('turbolinks:load', function() {
-  $('.edit-question-link').click(function(e) {
-    e.preventDefault();
-
-    var current      = $(this);
-    var editForm     = $('.edit-question');
-    var questionBody = $('.question-body');
-
-    toggleLink(current, 'Edit');
-    editForm.toggle();
-    questionBody.toggle();
-  });
+  App.questions.eventsHandler
+    .handleEditFormToggleEvent()
+    .handleAjaxUpdateEvents()
+    .handleAjaxDeleteEvent()
+    .handleAjaxVoteEvents();
 });
 
-function findOrCreateQuestionsList() {
-  var questions     = $('.questions');
-  var questionsList = questions.find('tbody');
+App.questions || (App.questions = {});
+
+App.questions.eventsHandler = new ResourceEventsHandler({
+  resource:    'question',
+  attachable:  true,
+  placeholder: 'Nobody has asked anything yet!'
+});
+
+for (var key in voteEventsMixin) {
+  App.questions.eventsHandler[key] = voteEventsMixin[key];
+}
+
+App.questions.findQuestion = function(id) {
+  return $('#question-' + id);
+}
+
+App.questions.findOrCreateList = function() {
+  var questions = $('.questions');
+  var questionsList = questions.find('.questions-table > tbody');
   if (!questionsList.length) {
-    questions.html('<table><tbody></tbody></table>');
-    questionsList = questions.find('tbody');
+    var emptyTable = App.utils.emptyTable('questions');
+    questions.find('.questions-placeholder').replaceWith(emptyTable);
+    questionsList = questions.find('.questions-table > tbody');
   }
   return questionsList;
 }

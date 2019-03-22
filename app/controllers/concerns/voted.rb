@@ -21,8 +21,7 @@ module Voted
   end
 
   def delete_vote
-    vote = current_user.delete_vote(@votable)
-    if vote.present?
+    if current_user.delete_vote(@votable)
       render json: voted_json
     else
       message = voted_response_message(:not_removable)
@@ -61,10 +60,10 @@ module Voted
 
   def voted_json
     {
-      votable_id: @votable.id,
-      resource:   resource_type,
-      rating:     @votable.vote_rating,
-      message:    voted_response_message
+      votable_id:   @votable.id,
+      votable_type: resource_type,
+      rating:       @votable.vote_rating,
+      message:      voted_response_message
     }
   end
 end
