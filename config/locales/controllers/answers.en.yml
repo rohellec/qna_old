@@ -1,8 +1,0 @@
-en:
-  answers:
-    create:
-      message: "New answer has been successfully created"
-    update:
-      message: "Answer has been successfully updated"
-    destroy:
-      message: "Answer has been successfully deleted"

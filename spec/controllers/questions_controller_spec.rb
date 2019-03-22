@@ -8,52 +8,11 @@ describe QuestionsController do
 
   it_behaves_like "voted"
 
-  describe "GET #index" do
-    let(:questions) { create_pair(:question) }
-
-    before { get :index }
-
-    it "populates an array of all created questions" do
-      expect(assigns(:questions)).to match_array(questions)
-    end
-
-    it "renders 'index' view" do
-      expect(response).to render_template :index
-    end
-  end
-
-  describe "GET #show" do
-    let(:question) { create(:question) }
-    let!(:answers) { create_pair(:answer, question: question) }
-
-    before { get :show, params: { id: question } }
-
-    it "sets requested question" do
-      expect(assigns(:question)).to eq question
-    end
-
-    it "populates an array of answers for current question" do
-      expect(assigns(:answers)).to match_array answers
-    end
-
-    it "builds new answer" do
-      expect(assigns(:answer)).to be_a_new(Answer)
-    end
-
-    it "renders 'show' view" do
-      expect(response).to render_template :show
-    end
-  end
-
   describe "GET #new" do
     context "when authenticated" do
       before do
         sign_in user
         get :new
-      end
-
-      it "builds new question" do
-        expect(assigns(:question)).to be_a_new(Question)
       end
 
       it "renders 'new' view" do
@@ -78,10 +37,6 @@ describe QuestionsController do
 
       context "when author" do
         before { get :edit, params: { id: user_question } }
-
-        it "assigns the requested question" do
-          expect(assigns(:question)).to eq user_question
-        end
 
         it "renders 'edit' template" do
           expect(response).to render_template :edit
@@ -117,10 +72,15 @@ describe QuestionsController do
             post :create, params: { question: valid_attributes }
           end.to change(user.questions, :count).by(1)
         end
+      end
 
-        it "redirects to question_path" do
-          post :create, params: { question: valid_attributes }
-          expect(response).to redirect_to question_path(assigns(:question))
+      context "with nested attachments attributes" do
+        let(:attributes) { attributes_for(:question_with_attachment, user: user) }
+
+        it "creates new question attachment" do
+          expect do
+            post :create, params: { question: attributes }
+          end.to change(Attachment, :count).by(1)
         end
       end
 
@@ -134,16 +94,6 @@ describe QuestionsController do
         it "re-renders 'new' view" do
           post :create, params: { question: invalid_attributes }
           expect(response).to render_template :new
-        end
-      end
-
-      context "with nested attachments attributes" do
-        let(:attributes) { attributes_for(:question_with_attachment, user: user) }
-
-        it "creates new question attachment" do
-          expect do
-            post :create, params: { question: attributes }
-          end.to change(Attachment, :count).by(1)
         end
       end
     end
@@ -168,13 +118,9 @@ describe QuestionsController do
       context "when author" do
         let(:user_question) { create(:question, user: user) }
 
-        context "with valid attributes using html" do
+        context "with valid attributes using :html format" do
           before do
             patch :update, params: { id: user_question, question: valid_attributes }
-          end
-
-          it "assigns the requested question" do
-            expect(assigns(:question)).to eq user_question
           end
 
           it "updates question attributes" do
@@ -182,13 +128,9 @@ describe QuestionsController do
             expect(user_question.title).to eq valid_attributes[:title]
             expect(user_question.body).to  eq valid_attributes[:body]
           end
-
-          it "redirects to question_path" do
-            expect(response).to redirect_to user_question
-          end
         end
 
-        context "with valid attributes using json" do
+        context "with valid attributes using :json format" do
           before do
             patch :update, params: { id: user_question, question: valid_attributes }, format: :json
           end
@@ -208,7 +150,44 @@ describe QuestionsController do
           end
         end
 
-        context "with invalid attributes using html" do
+        context "with nested attachments attributes" do
+          let(:attachment) { create(:question_attachment, attachable: user_question) }
+          let(:attributes) do
+            attachments_attributes = [
+              attributes_for(
+                :attachment,
+                id: attachment.id,
+                file: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/test2.png"))
+              )
+            ]
+            attributes_for(:question, attachments_attributes: attachments_attributes)
+          end
+
+          context "with :html format" do
+            before do
+              patch :update, params: { id: user_question, question: attributes }
+            end
+
+            it "updates attachment attributes" do
+              attachment.reload
+              expect(attachment.file.filename).to eq "test2.png"
+            end
+          end
+
+          context "with :json format" do
+            before do
+              patch :update, params: { id: user_question, question: attributes },
+                             format: :json
+            end
+
+            it "updates attachment attributes" do
+              attachment.reload
+              expect(attachment.file.filename).to eq "test2.png"
+            end
+          end
+        end
+
+        context "with invalid attributes using :html format" do
           before do
             patch :update, params: { id: user_question, question: invalid_attributes }
           end
@@ -218,13 +197,9 @@ describe QuestionsController do
             expect(user_question.title).not_to eq valid_attributes[:title]
             expect(user_question.body).not_to  eq valid_attributes[:body]
           end
-
-          it "renders 'edit' template" do
-            expect(response).to render_template :edit
-          end
         end
 
-        context "with invalid attributes using json" do
+        context "with invalid attributes using :json format" do
           before do
             patch :update, params: { id: user_question, question: invalid_attributes },
                            format: :json
@@ -240,31 +215,8 @@ describe QuestionsController do
             expect(response.content_type).to eq "application/json"
           end
 
-          it "responds with :forbidden status" do
-            expect(response).to have_http_status :forbidden
-          end
-        end
-
-        context "with nested attachments attributes" do
-          let(:attachment) { create(:question_attachment, attachable: user_question) }
-          let(:attributes) do
-            attachments_attributes = [
-              attributes_for(
-                :attachment,
-                id: attachment.id,
-                file: Rack::Test::UploadedFile.new(Rails.root.join("spec/fixtures/test2.png"))
-              )
-            ]
-            attributes_for(:question, attachments_attributes: attachments_attributes)
-          end
-
-          before do
-            patch :update, params: { id: user_question, question: attributes }
-          end
-
-          it "updates attachment attributes" do
-            attachment.reload
-            expect(attachment.file.filename).to eq "test2.png"
+          it "responds with :unprocessable_entity status" do
+            expect(response).to have_http_status :unprocessable_entity
           end
         end
       end
@@ -305,14 +257,14 @@ describe QuestionsController do
           end.to change(Question, :count).by(-1)
         end
 
-        context "with HTML request" do
+        context "with :html request format" do
           it "redirects to 'index'" do
             delete :destroy, params: { id: user_question }
             expect(response).to redirect_to questions_path
           end
         end
 
-        context "with XHR request" do
+        context "with :json request format" do
           before do
             delete :destroy, params: { id: user_question }, format: :json
           end

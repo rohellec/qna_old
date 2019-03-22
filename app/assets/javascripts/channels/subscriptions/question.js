@@ -1,7 +1,7 @@
 $(document).on('turbolinks:load', function() {
   if (!gon.question_id) {
-    App.channels.answers  && App.channel.answers.unsubscribe();
-    App.channels.comments && App.channel.comments.unsubscribe();
+    App.channels.answers  && App.channels.answers.unsubscribe();
+    App.channels.comments && App.channels.comments.unsubscribe();
 
     App.channels.questions = App.cable.subscriptions.create(
       { channel: 'QuestionsChannel' },

@@ -36,12 +36,8 @@ describe CommentsController do
                           format: :json
           end
 
-          it "assigns the corresponded commentable" do
-            expect(assigns(:commentable)).to eq commentable
-          end
-
-          it "response has :success http status" do
-            expect(response).to have_http_status(:success)
+          it "response has :created http status" do
+            expect(response).to have_http_status(:created)
           end
 
           it "response has 'application/json' content type" do
@@ -54,7 +50,7 @@ describe CommentsController do
 
           it "response body contains message" do
             expect(response.body).to match(
-              "\"message\":\"#{I18n.translate("comments.create.message")}\""
+              "\"message\":\"#{I18n.translate("flash.comments.create.success")}\""
             )
           end
         end
@@ -84,12 +80,8 @@ describe CommentsController do
                           format: :json
           end
 
-          it "assigns the corresponded commentable" do
-            expect(assigns(:commentable)).to eq commentable
-          end
-
-          it "response has :forbidden http status" do
-            expect(response).to have_http_status(:forbidden)
+          it "response has :unprocessable_entity http status" do
+            expect(response).to have_http_status(:unprocessable_entity)
           end
 
           it "response has 'application/json' content type" do
@@ -133,18 +125,14 @@ describe CommentsController do
                            format: :json
           end
 
-          it "assigns the requested comment" do
-            expect(assigns(:comment)).to eq user_comment
-          end
-
           it "changes answer body" do
             user_comment.reload
             expect(user_comment.body).to eq valid_attributes[:body]
           end
 
           describe "response" do
-            it "has :success http status" do
-              expect(response).to have_http_status(:success)
+            it "has :ok http status" do
+              expect(response).to have_http_status(:ok)
             end
 
             it "has 'application/json' content type" do
@@ -157,7 +145,7 @@ describe CommentsController do
 
             it "body contains message" do
               expect(response.body).to match(
-                "\"message\":\"#{I18n.translate("comments.update.message")}\""
+                "\"message\":\"#{I18n.translate("flash.comments.update.success")}\""
               )
             end
           end
@@ -169,18 +157,14 @@ describe CommentsController do
                            format: :json
           end
 
-          it "assigns the requested comment" do
-            expect(assigns(:comment)).to eq user_comment
-          end
-
           it "doesn't update answer body" do
             user_comment.reload
             expect(user_comment).not_to eq valid_attributes[:body]
           end
 
           describe "response" do
-            it "has :forbidden http status" do
-              expect(response).to have_http_status(:forbidden)
+            it "has :unprocessable_entity http status" do
+              expect(response).to have_http_status(:unprocessable_entity)
             end
 
             it "has 'application/json' content type" do
@@ -233,12 +217,8 @@ describe CommentsController do
                              format: :json
           end
 
-          it "assigns the requested comment" do
-            expect(assigns(:comment)).to eq user_comment
-          end
-
-          it "response has :success http status" do
-            expect(response).to have_http_status(:success)
+          it "response has :ok http status" do
+            expect(response).to have_http_status(:ok)
           end
 
           it "response has 'application/json' content type" do
@@ -251,7 +231,7 @@ describe CommentsController do
 
           it "response body contains message" do
             expect(response.body).to match(
-              "\"message\":\"#{I18n.translate("comments.destroy.message")}\""
+              "\"message\":\"#{I18n.translate("flash.comments.destroy.success")}\""
             )
           end
         end

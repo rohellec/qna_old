@@ -8,14 +8,16 @@ class QuestionsController < ApplicationController
 
   after_action  :publish_question, only: :create
 
+  respond_to :json, only: [:update, :destroy]
+  respond_to :html
+
   def index
-    @questions = Question.all
+    respond_with(@questions = Question.all)
   end
 
   def show
-    @attachments = @question.attachments
     @answers = @question.answers_by_rating
-    @answer = Answer.new
+    respond_with(@question)
   end
 
   def new
@@ -26,39 +28,16 @@ class QuestionsController < ApplicationController
   end
 
   def create
-    @question = Question.new(question_params)
-    @question.user = current_user
-    if @question.save
-      redirect_to @question, flash: { success: t(".message") }
-    else
-      render :new
-    end
+    respond_with(@question = current_user.questions.create(question_params))
   end
 
   def update
-    respond_to do |format|
-      if @question.update(question_params)
-        format.json { render_json_with_message(@question.as_json(include: :attachments)) }
-        format.html do
-          flash[:success] = t(".message")
-          redirect_to @question
-        end
-      else
-        format.json { render_errors }
-        format.html { render :edit }
-      end
-    end
+    @question.update(question_params)
+    respond_with(@question, include: :attachments)
   end
 
   def destroy
-    @question.destroy
-    respond_to do |format|
-      format.json { render_json_with_message }
-      format.html do
-        flash[:success] = t(".message")
-        redirect_to questions_path
-      end
-    end
+    respond_with(@question.destroy)
   end
 
   private

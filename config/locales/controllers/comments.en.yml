@@ -1,8 +1,0 @@
-en:
-  comments:
-    create:
-      message: "Your comment has been successfully created"
-    update:
-      message: "Your comment has been successfully updated"
-    destroy:
-      message: "Your comment has been successfully deleted"

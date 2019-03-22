@@ -36,9 +36,9 @@ describe AnswersController do
           expect(response.content_type).to eq "application/json"
         end
 
-        it "responds with :ok status" do
+        it "responds with :created status" do
           post :create, params: { question_id: question, answer: valid_attributes }, format: :json
-          expect(response).to have_http_status :ok
+          expect(response).to have_http_status :created
         end
       end
 
@@ -57,10 +57,10 @@ describe AnswersController do
           expect(response.content_type).to eq "application/json"
         end
 
-        it "responds with :forbidden status" do
+        it "responds with :unprocessable_entity status" do
           post :create, params: { question_id: question, answer: invalid_attributes },
                         format: :json
-          expect(response).to have_http_status :forbidden
+          expect(response).to have_http_status :unprocessable_entity
         end
       end
 
@@ -104,10 +104,6 @@ describe AnswersController do
             patch :update, params: { id: user_answer, answer: valid_attributes }, format: :json
           end
 
-          it "assigns the requested answer" do
-            expect(assigns(:answer)).to eq user_answer
-          end
-
           it "changes answer body" do
             user_answer.reload
             expect(user_answer.body).to eq valid_attributes[:body]
@@ -136,8 +132,8 @@ describe AnswersController do
             expect(response.content_type).to eq "application/json"
           end
 
-          it "responds with :forbidden status" do
-            expect(response).to have_http_status :forbidden
+          it "responds with :unprocessable_entity status" do
+            expect(response).to have_http_status :unprocessable_entity
           end
         end
 
@@ -189,11 +185,6 @@ describe AnswersController do
 
       context "when author" do
         let!(:user_answer)  { create(:answer, question: question, user: user) }
-
-        it "assigns the requested answer" do
-          delete :destroy, params: { id: user_answer }, format: :json
-          expect(assigns(:answer)).to eq user_answer
-        end
 
         it "deletes answer from db" do
           expect do
@@ -255,10 +246,6 @@ describe AnswersController do
       context "when question's author" do
         before { post :accept, params: { id: answer }, format: :json }
 
-        it "assigns the requested answer" do
-          expect(assigns(:answer)).to eq answer
-        end
-
         it "sets answer's :accepted attribute to true" do
           answer.reload
           expect(answer).to be_accepted
@@ -266,10 +253,6 @@ describe AnswersController do
 
         it "responds with json" do
           expect(response.content_type).to eq "application/json"
-        end
-
-        it "responds with :ok status" do
-          expect(response).to have_http_status :ok
         end
       end
 
@@ -311,10 +294,6 @@ describe AnswersController do
       context "when question's author" do
         before { post :remove_accept, params: { id: answer }, format: :json }
 
-        it "assigns the requested answer" do
-          expect(assigns(:answer)).to eq answer
-        end
-
         it "sets accepted answer's :accepted attribute to false" do
           answer.reload
           expect(answer).not_to be_accepted
@@ -322,10 +301,6 @@ describe AnswersController do
 
         it "responds with json" do
           expect(response.content_type).to eq "application/json"
-        end
-
-        it "responds with :ok status" do
-          expect(response).to have_http_status :ok
         end
       end
 

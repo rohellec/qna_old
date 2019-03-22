@@ -10,27 +10,20 @@ class AnswersController < ApplicationController
 
   after_action :publish_answer, only: :create
 
+  respond_to :json
+
   def create
-    @answer = @question.answers.build(answer_params)
-    @answer.user = current_user
-    if @answer.save
-      render_json_with_message(@answer.as_json(include: :attachments))
-    else
-      render_errors
-    end
+    @answer = @question.answers.create(answer_params.merge!(user: current_user))
+    respond_with(@answer, include: :attachments)
   end
 
   def update
-    if @answer.update(answer_params)
-      render_json_with_message(@answer.as_json(include: :attachments))
-    else
-      render_errors
-    end
+    @answer.update(answer_params)
+    respond_with(@answer, include: :attachments)
   end
 
   def destroy
-    @answer.destroy
-    render_json_with_message
+    respond_with(@answer.destroy)
   end
 
   def accept
@@ -64,6 +57,5 @@ class AnswersController < ApplicationController
 
   def set_question
     @question = Question.find(params[:question_id])
-    @answers  = @question.answers
   end
 end

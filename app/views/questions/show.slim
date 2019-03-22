@@ -37,4 +37,4 @@ div id="question-#{@question.id}" class="question #{"answered" if @question.answ
       i Nobody has given any answer yet!
 
   - if user_signed_in?
-    == render "questions/new_answer", question: @question, answer: @answer
+    == render "questions/new_answer", question: @question
